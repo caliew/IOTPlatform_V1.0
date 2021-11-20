@@ -189,11 +189,10 @@ const AuthState = props => {
   // ------
   const logout = () => {
     // ------------------------
-    console.log('..CLEAR TIMER...')
-    mTimer.map( _mTimer => {
-      console.log('..TIMER..',_mTimer)
+    mTimer.forEach( _mTimer => {
       clearTimeout(_mTimer)
     });
+    // ---------
     setTimer([])
     dispatch({ type: LOGOUT });
     // ------------------------
@@ -204,7 +203,6 @@ const AuthState = props => {
   const addTimer = (_mTimer) => {
     mTimer.push(_mTimer);
     setTimer(mTimer);
-    console.log('..TIMER ADDED...',_mTimer);
   }
   // ------------
   // Clear Errors

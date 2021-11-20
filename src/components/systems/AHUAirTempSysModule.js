@@ -6,7 +6,8 @@ import { MDBTable,MDBTableBody,MDBRow,MDBCard, MDBCardTitle, MDBCardText } from 
 import SparklinePlots from '../data-ui/SparklinePlots';
 
 import Chart from "react-google-charts";
-import Thermometer from './Thermometer'
+import Thermometer from './Thermometer';
+import TDKFloorPlan from './TDKFloorPlan';
 
 import { 
   CTW_A_TEMP1,CTW_A_TEMP2,CTW_A_FLOWRATE,CTW_A_ELECTPWR, 
@@ -103,7 +104,7 @@ function AHUAirTempSysModule ({ model, color, systemComponent, handleComponetSel
 					{ showHide && (
 							// width="700" height="534" 
 							<svg viewBox="0 0 700 534" preserveAspectRatio="none" >
-									{ getModel1() }
+                <TDKFloorPlan />
 									{ type === '1' && getRHHeatMap() }
 									{ type === '2' && getAHULineMap() }
 							</svg>

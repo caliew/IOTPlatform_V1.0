@@ -34,13 +34,16 @@ const Navbar = (props) => {
   //  -------------
   const authLinks = (
     <MDBNavbarNav right>
-      { user && user.companyname != "AWC" && 
+      { user && (user.companyname != "AWC" && user.companyname != "IKN" ) && 
         <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/BigDATAView' className='white-text'>VISZ</Link></MDBNavItem>
+      }
+      { user && (user.companyname != "AWC" && user.companyname != "IKN") && 
+        <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/test' className='white-text'>TEST</Link></MDBNavItem>
       }
 
       <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/' className='white-text'>HOME</Link></MDBNavItem>
 
-      { user && user.companyname != "AWC" && 
+      { user && (user.companyname != "AWC" && user.companyname != "IKN") && 
           <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/cmms' className='white-text'>CMMS</Link></MDBNavItem>
       }
 

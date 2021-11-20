@@ -1,5 +1,6 @@
 import {
   SET_SENSORS,
+  SET_RAWSENSORS,
   SENSOR_ERROR,
   ADD_SENSOR,
   UPDATE_SENSOR,
@@ -13,6 +14,7 @@ import {
   GET_SENSORS_DATA
 } from '../types';
 
+/*
 function randomExtend(minNum, maxNum) {
   if (arguments.length === 1) {
     return parseInt(Math.random() * minNum + 1, 10)
@@ -20,9 +22,10 @@ function randomExtend(minNum, maxNum) {
     return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10)
   }
 }
+*/
 // -----------
 function getReading(sensor) {
-	const { name,logsdata,sensorId } = sensor
+	const { logsdata } = sensor
 	let reading;
 	// ------------------
 	switch (sensor.type)
@@ -131,6 +134,12 @@ export default (state, action) => {
           } else {
             map[sensor.location].push(sensor); };
           return map; },{}),
+        loading: false
+      };
+    case SET_RAWSENSORS:
+      return {
+        ...state,
+        rawsensors:action.payload,
         loading: false
       };
     case ADD_SENSOR:

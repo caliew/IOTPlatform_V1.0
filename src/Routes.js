@@ -7,6 +7,7 @@ import MaintScehduler from './components/pages/MaintScehduler';
 import HomePage from './components/pages/HomePage';
 import RegisterPage from './components/pages/RegisterPage';
 import ReportPage from './components/pages/ReportPage';
+import TestPage from './components/pages/TestPage';
 import AboutPage from './components/pages/AboutPage';
 import LoginPage from './components/pages/LoginPage';
 import NotFoundPage from './components/pages/NotFoundPage';
@@ -21,6 +22,7 @@ class Routes extends React.Component {
         <Route exact path='/admin' component={AdminPage} />
         <Route exact path='/register' component={RegisterPage} />
         <Route exact path='/report' component={ReportPage} />
+        <Route exact path='/test' component={TestPage} />
         <Route exact path='/about' component={AboutPage} />
         <Route exact path='/login' component={LoginPage} />
         <Route component={NotFoundPage} />

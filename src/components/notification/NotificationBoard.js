@@ -4,16 +4,6 @@ import NotificationContext from '../../context/notification/notificationContext'
 import SensorContext from '../../context/sensor/sensorContext';
 import { MDBContainer,MDBListGroup,MDBListGroupItem,MDBBadge,MDBJumbotron } from 'mdbreact';
 
-const demoNotifications = [
-	{ dateTime: "2021-08-25T14:04", message:"BACKEND#1 RH SENSOR > 21C", badge: "primary" },
-	{ dateTime: "2021-08-25T09:05", message:"HVAC CHILLER EFFICIENCY DROP > 75%", badge: "secondary"},
-	{ dateTime: "2021-08-24T23:52", message:"COMPRESSORE C1 PRESSURE > 85%", badge: "danger"},
-	{ dateTime: "2021-08-24T22:52", message:"AIRFLOW < LIMIT SET", badge: "warning"},
-	{ dateTime: "2021-08-24T22:52", message:"[COLOR:INFO...] ", badge: "info"},
-	{ dateTime: "2021-08-24T22:52", message:"[COLOR:LIGHT...] ", badge: "light"},
-	{ dateTime: "2021-08-24T22:52", message:"[COLOR:DARK...] ", badge: "dark"},
-]
-
 const Notification = () => {
 	// ---------------------------
   const notificationContext = useContext(NotificationContext);	

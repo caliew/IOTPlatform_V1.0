@@ -4,6 +4,7 @@ import SensorList from './SensorList';
 import { MDBTable,MDBTableBody,MDBRow,MDBCard, MDBCardTitle  } from 'mdbreact';
 
 import Thermometer from './Thermometer'
+import TDKFloorPlan from './TDKFloorPlan';
 
 import SparklinePlots from '../data-ui/SparklinePlots';
 
@@ -14,7 +15,14 @@ import SparklinePlots from '../data-ui/SparklinePlots';
 // REFERENCE SVG DATA FROM 
 // '../components/svg/TDK_ISOVIEW.svg'
 
-function ENVSysModule({ model, color, systemComponent, handleComponetSelection, title, type }) {
+let sensorLocationMap = {
+	"B0-2F-E0-3F-DC-9B" : { name:"Channel 13", id:"B0-2F-E0-3F-DC-9B", x: 1020.0, y: 280.0, reading:'' }, 
+	"B0-BC-82-C4-C4-41" : { name:"(Cold room)", id:"B0-BC-82-C4-C4-41", x: 1160.0, y: 380.0, reading:'' }, 
+	"B0-B6-C7-46-4D-53" : { name:"Channel 11", id:"B0-B6-C7-46-4D-53", x: 1145.0, y: 320.0, reading:'' }, 
+	"B0-F6-BF-85-9E-13" : { name:"Channel 10", id:"B0-F6-BF-85-9E-13",x: 1145.0, y: 270.0, reading:'' }, 
+}
+
+function ENVSysModule({ systemComponent, handleComponetSelection, type, userCompanyName }) {
     // -----------
     const [wiSensors, setWiSensor] = useState([]);
     const [sensorLabels, setSensorLabels] = useState([]);
@@ -27,7 +35,6 @@ function ENVSysModule({ model, color, systemComponent, handleComponetSelection, 
     const { sensors, getSensors } = sensorContext;
     // --------------
     useEffect(()=>{
-      console.log(`... ENVSYSMODULES... USEFFECT ->.SENSORS UPDATED ...`)
         if (sensors === null) getSensors();
         abstactWiSensor();
     },[sensors])
@@ -43,23 +50,31 @@ function ENVSysModule({ model, color, systemComponent, handleComponetSelection, 
 			let _tempDatas = [];
 			let _plotDatas = [];
 			let _humdDatas = [];
+      // ----------------------
 			sensors.map( sensor => {
-					if (sensor.type === 'WISENSOR') {
-					let { datas,maxTempDateTime,minTempDateTime,maxHumdDateTime,minHumdDateTime,
-						maxHumd,minHumd,maxTemp,minTemp,rmsTemp } = getDatas(sensor);
-					_wiSensors.push(sensor);
-					_sLabels.push(sensor.name);
-					_plotDatas.push(datas);
-					sensor.logsdata[0] && _tempDatas.push(Number(sensor.logsdata[0].Temperature.toFixed(1)));
-					sensor.logsdata[0] && _humdDatas.push(['HUMD',Number(sensor.logsdata[0].Humidity)]);
-					}
-			})
+        if (sensor.type === 'WISENSOR') {
+        let { datas } = getDatas(sensor);
+        _wiSensors.push(sensor);
+        _sLabels.push(sensor.name);
+        _plotDatas.push(datas);
+        sensor.logsdata[0] && _tempDatas.push(Number(sensor.logsdata[0].Temperature.toFixed(1)));
+        sensor.logsdata[0] && _humdDatas.push(['HUMD',Number(sensor.logsdata[0].Humidity)]);
+        };
+        // ---------
+        let ObjSensor = sensorLocationMap[sensor.sensorId];
+        if (ObjSensor && ObjSensor.hasOwnProperty("reading")) {
+          ObjSensor["reading"] = Number(sensor.logsdata[0].Temperature.toFixed(1));
+          delete sensorLocationMap[sensor.name];
+        }
+        sensorLocationMap[sensor.sensorId] = ObjSensor;
+        // -------------------
+      });
+      // --------------------
 			setWiSensor(_wiSensors);
 			setSensorLabels(_sLabels);
 			setTempData(_tempDatas);
 			setHUmdData(_humdDatas);
 			setPlotDatas(_plotDatas);
-    // -----
     }
     const handleShowHide = () => { 
         setShowHide(!showHide);
@@ -83,12 +98,30 @@ function ENVSysModule({ model, color, systemComponent, handleComponetSelection, 
         pumpCTW : "CTW PUMP",
         pumpAHU : "AHU PUMP"
     }
+		const getFloorPlan = () => {
+      let viewBoxData = (userCompanyName === "AWC" || userCompanyName === "IKN")  ? "0 0 1542 583" : "0 0 700 534";
+			return (
+				<svg viewBox={viewBoxData} preserveAspectRatio="none" >
+					<TDKFloorPlan userCompanyName={userCompanyName}/>
+					{ type === '1' && getRHHeatMap() }
+					{ type === '2' && getAHULineMap() }
+				</svg>
+			)
+		}
+		const MDBRowWidth = () => {
+			let width = (userCompanyName === "AWC" || userCompanyName === "IKN") ? 1250 : 650; 
+			return width;
+		}
     // --------------------------------------------
     // fill='green' stroke='black' stroke-width='1'
     // width="645" height="459" viewBox="0 0 645 459"
     // --------------------------------------------
     return (
 			<MDBRow center>
+				<MDBCard className="px-4 py-4 m-2" style={{width:`${MDBRowWidth()}px`}}>
+						{/* width="700" height="534"  */}
+						{ showHide && getFloorPlan() }
+				</MDBCard>
 				<MDBCard className="p-3 m-2"style={{ width: "26rem" }}>
 					<MDBCardTitle>ENV. TEMPERATURE</MDBCardTitle>
 					<MDBTable striped small>
@@ -98,16 +131,6 @@ function ENVSysModule({ model, color, systemComponent, handleComponetSelection, 
 						}
 						</MDBTableBody>
 					</MDBTable>
-				</MDBCard>
-				<MDBCard className="px-4 py-4 m-2" style={{width:"650px"}}>
-						{/* width="700" height="534"  */}
-						{ showHide && (
-								<svg viewBox="0 0 700 534" preserveAspectRatio="none" >
-								{ getModel1() }
-								{ type === '1' && getRHHeatMap() }
-								{ type === '2' && getAHULineMap() }
-								</svg>
-						)}
 				</MDBCard>
 				<MDBCard className="px-2 py-2 m-2">
 					{ showHide && sensorLabels && tempData && 
@@ -135,10 +158,6 @@ function ENVSysModule({ model, color, systemComponent, handleComponetSelection, 
 	)
 }
 
-function getwidth() {
-    let width = window.innerWidth > 465 ? '600' : '320';
-    return width;
-}
 // ------------
 function getDatas(sensor) {
   // console.log(sensor.logsdata);
@@ -154,7 +173,7 @@ function getDatas(sensor) {
   let rmsTemp = 0;
   let minTemp = 999;
   let minHumd = 999;
-  sensor.logsdata.map( (data,index) => {
+  sensor.logsdata.forEach( (data,index) => {
     let _Date = new Date(data.TIMESTAMP);
     let _timeLabel = _Date.toLocaleDateString([], {hour12: false,hour: "2-digit",minute: "2-digit"});
     // -------------------------------------------------
@@ -384,49 +403,64 @@ const getModel1 = (sensorsData,componentNames,handleClick,bgColor) => {
     </g>
     )
 }
+const getSensorLocation = (prop) => {
+  // ---------------
+  if (sensorLocationMap.hasOwnProperty(prop)) {
+    let ObjSensorLocation = sensorLocationMap[prop];
+    return `translate(${ObjSensorLocation.x},${ObjSensorLocation.y})`;
+  }
+  return '';
+}
+const getSensorTemperature = (prop) => {
+  if (sensorLocationMap.hasOwnProperty(prop)) {
+    let ObjSensorLocation = sensorLocationMap[prop];
+    if(ObjSensorLocation.reading) return  ObjSensorLocation.reading;
+  }
+  return '';
+}
 const getRHHeatMap = () => {
-    return (
-        <Fragment>
-            <def>
-                <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                    <stop offset="0%" style={{stopColor:'rgb(255,255,255)',stopOpacity:0}} />
-                    <stop offset="100%" style={{stopColor:'rgb(0,0,255)',stopOpacity:1}} />
-                </radialGradient>
-                <filter id="heatMap">
-                    {/* <!--Blur effect--> */}
-                    <feGaussianBlur in="SourceGraphic" stdDeviation="15"/>
-                </filter>
-            </def>
-            <g transform="translate(320.0,170.0)" >
-                <circle cx="0" cy="0" r="60" fill="green" filter="url(#heatMap)" />
-                <circle cx="0" cy="0" r="30" fill="red" filter="url(#heatMap)" />
-                {/* <circle cx="0" cy="0" r="15" fill="yellow" filter="url(#heatMap)" /> */}
-                <circle cx="0" cy="0" r="1" fill="red" filter="url(#heatMap)" />
-                <text x="0" y="0" font-size='1.2rem' fill="white">1</text>
-            </g>
-            <g transform="translate(240.0,320.0)" >
-                <circle cx="0" cy="0" r="60" fill="green" filter="url(#heatMap)" />
-                <circle cx="0" cy="0" r="30" fill="black" filter="url(#heatMap)" />
-                {/* <circle cx="0" cy="0" r="15" fill="yellow" filter="url(#heatMap)" /> */}
-                <circle cx="0" cy="0" r="1" fill="red" filter="url(#heatMap)" />
-                <text x="0" y="0" font-size='1.2rem' fill="white">2</text>
-            </g>
-            <g transform="translate(150.0,240.0)" >
-                <circle cx="0" cy="0" r="60" fill="green" filter="url(#heatMap)" />
-                <circle cx="0" cy="0" r="30" fill="yellow" filter="url(#heatMap)" />
-                {/* <circle cx="0" cy="0" r="15" fill="yellow" filter="url(#heatMap)" /> */}
-                <circle cx="0" cy="0" r="1" fill="red" filter="url(#heatMap)" />
-                <text x="0" y="0" font-size='1.2rem' fill="white">3</text>
-            </g>
-            <g transform="translate(350.0,80.0)" >
-                <circle cx="0" cy="0" r="60" fill="green" filter="url(#heatMap)" />
-                <circle cx="0" cy="0" r="30" fill="blue" filter="url(#heatMap)" />
-                {/* <circle cx="0" cy="0" r="15" fill="yellow" filter="url(#heatMap)" /> */}
-                <circle cx="0" cy="0" r="1" fill="blue" filter="url(#heatMap)" />
-                <text x="0" y="0" font-size='1.2rem' fill="white">4</text>
-            </g>
-        </Fragment>
-    )
+	return (
+		<Fragment>
+			<def>
+				<radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+						<stop offset="0%" style={{stopColor:'rgb(255,255,255)',stopOpacity:0}} />
+						<stop offset="100%" style={{stopColor:'rgb(0,0,255)',stopOpacity:1}} />
+				</radialGradient>
+				<filter id="heatMap">
+						{/* <!--Blur effect--> */}
+						<feGaussianBlur in="SourceGraphic" stdDeviation="15"/>
+				</filter>
+			</def>
+			<g transform={getSensorLocation("B0-2F-E0-3F-DC-9B")} >
+				<circle cx="0" cy="0" r="40" fill="green" filter="url(#heatMap)" />
+				<circle cx="0" cy="0" r="20" fill="yellow" filter="url(#heatMap)" />
+				{/* <circle cx="0" cy="0" r="15" fill="yellow" filter="url(#heatMap)" /> */}
+				<circle cx="0" cy="0" r="1" fill="red" filter="url(#heatMap)" />
+				<text x="0" y="0" font-size='1.2rem' fill="white">{getSensorTemperature("B0-2F-E0-3F-DC-9B")}</text>
+			</g>
+			<g transform={getSensorLocation("B0-F6-BF-85-9E-13")} >
+				<circle cx="0" cy="0" r="40" fill="green" filter="url(#heatMap)" />
+				<circle cx="0" cy="0" r="20" fill="white" filter="url(#heatMap)" />
+				{/* <circle cx="0" cy="0" r="15" fill="yellow" filter="url(#heatMap)" /> */}
+				<circle cx="0" cy="0" r="1" fill="red" filter="url(#heatMap)" />
+				<text x="0" y="0" font-size='1.2rem' fill="white">{getSensorTemperature("B0-F6-BF-85-9E-13")}</text>
+			</g>
+			<g transform={getSensorLocation("B0-B6-C7-46-4D-53")} >
+				<circle cx="0" cy="0" r="40" fill="green" filter="url(#heatMap)" />
+				<circle cx="0" cy="0" r="20" fill="red" filter="url(#heatMap)" />
+				{/* <circle cx="0" cy="0" r="15" fill="yellow" filter="url(#heatMap)" /> */}
+				<circle cx="0" cy="0" r="1" fill="red" filter="url(#heatMap)" />
+				<text x="0" y="0" font-size='1.2rem' fill="white">{getSensorTemperature("B0-B6-C7-46-4D-53")}</text>
+			</g>
+			<g transform={getSensorLocation("B0-BC-82-C4-C4-41")} >
+				<circle cx="0" cy="0" r="40" fill="green" filter="url(#heatMap)" />
+				<circle cx="0" cy="0" r="20" fill="blue" filter="url(#heatMap)" />
+				{/* <circle cx="0" cy="0" r="15" fill="yellow" filter="url(#heatMap)" /> */}
+				<circle cx="0" cy="0" r="1" fill="red" filter="url(#heatMap)" />
+				<text x="0" y="0" font-size='1.2rem' fill="white">{getSensorTemperature("B0-BC-82-C4-C4-41")}</text>
+			</g>
+		</Fragment>
+	)
 }
 const getAHULineMap = () => {
     return (
@@ -454,7 +488,7 @@ const getThemrmometer = (data) => {
         {
           data.data.map( (tempReading,index) => (
             <div className="d-flex flex-column px-4 align-items-center " >
-                <Thermometer reverseGradient='true' theme="dark" value={tempReading} max="32" steps="3" format="°C" size="small" height="120" />
+                <Thermometer reverseGradient='true' theme="dark" value={tempReading} max="10" steps="1" format="°C" size="small" height="100" />
                 <p>{data.sensors[index]}</p>
             </div>
           ))

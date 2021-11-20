@@ -1,35 +1,13 @@
 import React, { useContext,useState,useEffect,useRef } from 'react';
-import axios from 'axios';
 import { CSVDownload,CSVLink } from 'react-csv';
 import Spinner from '../layout/Spinner';
 import SensorContext from '../../context/sensor/sensorContext';
 import AlertContext from '../../context/alert/alertContext';
-import { MDBContainer,MDBCard,MDBBtn, MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact';
+import { MDBCard,MDBBtn, MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact';
 
 import SparklinePlots from '../data-ui/SparklinePlots';
 import HeatMap from './Heatmap';
-import HeatMapLegend from './HeatmapLegend';
-import { range } from 'd3-array';
 
-const headers = [
-  { label: "First Name", key: "firstName" },
-  { label: "Last Name", key: "lastName" },
-  { label: "Email", key: "email" },
-  { label: "Age", key: "age" }
-]; 
-const data = [
-  { firstName: "Warren", lastName: "Morrow", email: "sokyt@mailinator.com", age: "36" },
-  { firstName: "Gwendolyn", lastName: "Galloway", email: "weciz@mailinator.com", age: "76" },
-  { firstName: "Astra", lastName: "Wyatt", email: "quvyn@mailinator.com", age: "57" },
-  { firstName: "Jasmine", lastName: "Wong", email: "toxazoc@mailinator.com", age: "42" },
-  { firstName: "Brooke", lastName: "Mcconnell", email: "vyry@mailinator.com", age: "56" },
-  { firstName: "Christen", lastName: "Haney", email: "pagevolal@mailinator.com", age: "23" },
-  { firstName: "Tate", lastName: "Vega", email: "dycubo@mailinator.com", age: "87" },
-  { firstName: "Amber", lastName: "Brady", email: "vyconixy@mailinator.com", age: "78" },
-  { firstName: "Philip", lastName: "Whitfield", email: "velyfi@mailinator.com", age: "22" },
-  { firstName: "Kitra", lastName: "Hammond", email: "fiwiloqu@mailinator.com", age: "35" },
-  { firstName: "Charity", lastName: "Mathews", email: "fubigonero@mailinator.com", age: "63" }
-];
 // ----------------------
 const ReportPage = () => {
 	//	-----------------
@@ -39,14 +17,11 @@ const ReportPage = () => {
   // -----------
   const [wiSensors, setWiSensor] = useState([]);
   const [sensorStatsData, setSensorStats] = useState([]);
-  const [sensorLabels, setSensorLabels] = useState();
-  const [tempData, setTempData] = useState();
-  const [humdData, setHUmdData] = useState();
   const [fileName, setFileName] = useState('Clue_Mediator_Report_Async.csv');
   const [headers,setHeaders] = useState([]);
   const [reportData,setReportData] = useState([]);
   const sensorContext = useContext(SensorContext);
-  const { sensors, DownLoadData, AbstractSensorStats, sensorsData, filtered, getSensors, loading, } = sensorContext;
+  const { sensors, DownLoadData, AbstractSensorStats,  getSensors } = sensorContext;
   // --------------
   const csvReport = {
     data: reportData,
@@ -80,13 +55,10 @@ const ReportPage = () => {
             sensor.logsdata[0] && _tempDatas.push(Number(sensor.logsdata[0].Temperature));
             sensor.logsdata[0] && _humdDatas.push(['HUMD',Number(sensor.logsdata[0].Humidity)]);
         }
+        return null;
       })
       // ---------------------
       setWiSensor(_wiSensors);
-      setSensorLabels(_sLabels);
-      setTempData(_tempDatas);
-      setHUmdData(_humdDatas);
-      // ---------------------
       abstractSensorsStats(_wiSensors);
       // --------------------
   }
@@ -97,17 +69,18 @@ const ReportPage = () => {
       sensorsArr.push(_sensor);
     })
 		// ----------------------------------------------
-    console.log('...ABSTRACT SENSORS STATS..')
     AbstractSensorStats(sensorsArr,callbackSensorStats);
     // -------------------
   }
 	const callbackSensorStats = (data) => {
 		// -----------------
-		console.log('... CALLBACK FROM ABSTRACT SENSOR STATS...')
 		let SensorStatsObj = {};
-		data.map( _sensor => {
-			let key = `${_sensor[0].dtuId}_${_sensor[0].sensorId}`;
-			SensorStatsObj[key] = _sensor[0].statsdata
+    // ---------------
+		data && data.forEach( _sensor => {
+      if (_sensor.length > 0) {
+        const _key = `${_sensor[0].dtuId}_${_sensor[0].sensorId}`;
+        SensorStatsObj[_key] = _sensor[0].statsdata
+      }
 		})
 		// -------------------------
 		setSensorStats(SensorStatsObj);
@@ -139,14 +112,13 @@ const ReportPage = () => {
     <main style={{ marginTop: '2rem' }}>
       <div className="d-flex flex-row justify-content-center flex-wrap" >
       {
-        wiSensors.length == 0 ? <Spinner /> : wiSensors.map((sensor,index) => {
+        wiSensors.length === 0 ? <Spinner /> : wiSensors.map((sensor,index) => {
           // -----
-          let { datas,maxTempDateTime,minTempDateTime,maxHumdDateTime,minHumdDateTime,
-                maxHumd,minHumd,maxTemp,minTemp,rmsTemp } = getDatas(sensor);
+          let { datas } = getDatas(sensor);
 					let keySensorStat = `${sensor.dtuId}_${sensor.sensorId}`;
           // -----
           return (
-            <MDBCard className='p-3 m-2 align-items-center justify-content-center' center style={{width:'500px'}}>
+            <MDBCard className='p-2 m-2 align-items-center justify-content-center' center style={{width:'550px'}}>
               { getTableSensorInfo(sensor) }
               { getTableSensorData(sensor) }
               <div className="d-flex flex-row justify-content-center flex-wrap" >
@@ -156,10 +128,10 @@ const ReportPage = () => {
                 }
               </div>
               {/* <HeatMapLegend/> */}
-              <div className="d-flex flex-column align-items-center justify-content-center" >
-                <div className="d-flex flex-row justify-content-center flex-wrap">
-                  <HeatMap title="MIN-TEMP" sensorData={sensorStatsData[keySensorStat]} index='0'/>
-                  <HeatMap title="MAX-TEMP" sensorData={sensorStatsData[keySensorStat]} index='1'/>
+              <div className="d-flex flex-column justify-content-center" >
+                <div className="d-flex flex-row align-items-baseline justify-content-center flex-wrap">
+                  { sensorStatsData[keySensorStat] && <HeatMap title="MIN-TEMP" sensorData={sensorStatsData[keySensorStat]} index='0'/> }
+                  { sensorStatsData[keySensorStat] && <HeatMap title="MAX-TEMP" sensorData={sensorStatsData[keySensorStat]} index='1'/> }
                 </div>
                 <div>
                   <MDBBtn color="white" size="lg" onClick={()=>HandleDownload(`${sensor.sensorId}`)}>
@@ -293,12 +265,5 @@ function getDateTimeLabel (DateTime) {
   let _timeLabel = _Date.toLocaleDateString([], {hour12: false,hour: "2-digit",minute: "2-digit"});
   return _timeLabel;
 }
-function randomData (n) {
-  return (
-    range(n).map((_, i) => ({
-      y: Math.random() * (Math.random() > 0.2 ? 1 : 2),
-      x: `${i + 1}`,
-    }))
-  )
-}
+// ----------------------
 export default ReportPage

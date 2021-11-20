@@ -6,8 +6,8 @@ import SparklinePlots from '../data-ui/SparklinePlots';
 import SensorList from './SensorList';
 
 import Chart from "react-google-charts";
-import Thermometer from './Thermometer'
-
+import Thermometer from './Thermometer';
+import TDKFloorPlan from './TDKFloorPlan';
 
 // https://jpg-svg.com/#
 // https://imageresizer.com/transparent-background
@@ -78,9 +78,9 @@ function AHUAirflowSysModule({ model, color, systemComponent, handleComponetSele
 						{/* width="700" height="534" */}
 						{ showHide && (
 								<svg viewBox="0 0 700 534" preserveAspectRatio="none" > 
-												{ getModel1() }
-												{ type === '1' && getRHHeatMap() }
-												{ type === '2' && getAHULineMap() }
+                  <TDKFloorPlan />
+                  { type === '1' && getRHHeatMap() }
+                  { type === '2' && getAHULineMap() }
 								</svg>
 						) }
 					</MDBCard>

@@ -5,6 +5,7 @@ import SensorContext from './sensorContext';
 import SensorReducer from './sensorReducer';
 import {
   SET_SENSORS,
+  SET_RAWSENSORS,
   ADD_SENSOR,
   SENSOR_ERROR,
   UPDATE_SENSOR,
@@ -19,6 +20,7 @@ import {
 
 const initialState = {
   sensors: null,
+  rawsensors: null,
   current: null,
   sensorsData: null,
   sensorStatsData: null,
@@ -40,23 +42,46 @@ const SensorState = props => {
   const getSensors = async () => {
     try {
       // --------------------------------
-      const params = { totalLines : 88, id: user._id };
+      const params = { totalLines : 100, id: user._id };
       axios.get('/api/sensors', { params } ).then (res => {
         // ----------------
         dispatch({type: SET_SENSORS,payload: res.data});
         // ----------------
       }).then( res => {
-        // --------------
+        // --------------    
         getSensorsData();
         // --------------
       }).catch ( err => {
         dispatch({
-          type: SENSOR_ERROR,
-          payload: err.response.msg
+          type: SENSOR_ERROR
         });
       })
       // --------------
     } catch (err) {
+    }
+  }
+  // rawsensordata
+  const getRawSensors = async() => {
+    try {
+      console.log('....GET API/SENSORS/RAWSENSORDATA....')
+      // --------------------------------
+      axios.get('/api/sensors/rawsensordata', { } ).then (res => {
+        // ----------------
+        dispatch({type: SET_RAWSENSORS,payload: res.data});
+        // ----------------
+      }).then( res => {
+        // --------------    
+        // getSensorsData();
+        // --------------
+      }).catch ( err => {
+        dispatch({
+          type: SENSOR_ERROR
+        });
+      })
+      // --------------
+
+    } catch (err) {
+
     }
   }
   // -----------
@@ -86,7 +111,7 @@ const SensorState = props => {
     let sensorsStatsData = [];
     try {
       let count =0;
-      sensorsArr.map( _sensor => {
+      sensorsArr.forEach( _sensor => {
         let QueryString = { sensorId:_sensor.sensorId, dtuId:_sensor.dtuId };
         axios.get(`api/sensors/sensorstats/${_sensor.dtuId}&${_sensor.sensorId}`,QueryString).then(res => {
           ++count;
@@ -203,6 +228,7 @@ const SensorState = props => {
     <SensorContext.Provider
       value={{
         sensors : state.sensors,
+        rawsensors : state.rawsensors,
         current: state.current,
         filtered : state.filtered,
         sensorsData : state.sensorsData,
@@ -215,6 +241,7 @@ const SensorState = props => {
         updateSensor,
         deleteSensor,
         getSensors,
+        getRawSensors,
         filterSensors,
         clearFilter,
         clearCurrent,

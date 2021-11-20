@@ -33,6 +33,7 @@ export const LOGOUT                 = 'LOGOUT';
 export const CLEAR_ERRORS           = 'CLEAR_ERRORS';
 
 export const SET_SENSORS            = 'SET_SENSORS';
+export const SET_RAWSENSORS         = 'SET_RAWSENSORS';
 export const ADD_SENSOR             = 'ADD_SENSOR';
 export const UPDATE_SENSOR          = 'UPDATE_SENSOR';
 export const UPDATE_SENSORSTATS     = 'UPDATE_SENSORSTATS';

@@ -2,7 +2,7 @@ import React, {useReducer} from 'react';
 import axios from 'axios';
 import NotificationContext from './notificationContext';
 import notificationReducer from './notificationReducer';
-import {SET_NOTIFICATION, NOTIFICATION_ERROR, REMOVE_NOTIFICATION} from '../types';
+import {SET_NOTIFICATION, NOTIFICATION_ERROR} from '../types';
 
 const initialState = {
   notifications: null
@@ -26,7 +26,7 @@ const NotificationState = props => {
       }).catch ( err => {
         dispatch({
           type: NOTIFICATION_ERROR,
-          payload: err.response.msg
+          payload: null
         });
       })
       // --------------

@@ -1,11 +1,10 @@
 import React from 'react';
 import { range } from 'd3-array';
 
-import { color, allColors } from '@data-ui/theme';
+import { color } from '@data-ui/theme';
 
 import {
   Sparkline,
-  BarSeries,
   LineSeries,
   PointSeries,
   BandLine,
@@ -17,8 +16,6 @@ import {
 
 
 import Example from './Example';
-import Spacer from './shared/Spacer';
-import { data } from 'jquery';
 
 PatternLines.displayName = 'PatternLines';
 
@@ -59,6 +56,7 @@ const SparklinePlots = ({systemComponent,sensorData,dataName,limits}) => {
   )
 }
 
+/*
 const plot1 = () => {
   return(
     (data => (
@@ -212,7 +210,7 @@ const plot5 = () => {
       </WithTooltip>
     </Example>))(randomData(45)
     )
-}
+}*/
 const plot6 = (data,title,limits) => {
   let _MIN;
   let _MAX;

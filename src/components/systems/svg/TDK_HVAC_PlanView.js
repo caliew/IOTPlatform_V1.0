@@ -29,7 +29,7 @@ function TDK_PlanVIEW({ model, color, sensorsData, systemComponent, handleCompon
     const [compSensors,setCOMPSensors] = useState([])
 
     const sensorContext = useContext(SensorContext);
-    const { sensors, filtered, getSensors, loading, } = sensorContext;
+    const { sensors, getSensors } = sensorContext;
     // --------------
     useEffect(()=>{
         if (sensors === null) getSensors();
@@ -57,8 +57,7 @@ function TDK_PlanVIEW({ model, color, sensorsData, systemComponent, handleCompon
         // setSensorLabels(_sLabels);
         // setAFlowData(_airflowDatas);
     }
-
-    // --------------
+      // --------------
     function handleClick (event) {
         let sysName = event.target.id;
         if (handleComponetSelection !== null) handleComponetSelection(sysName);
