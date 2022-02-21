@@ -11,9 +11,11 @@ import AHUAirflowSysModule from '../systems/AHUAirflowSysModule';
 import AHUAirTempSysModule from '../systems/AHUAirTempSysModule';
 import ENVSysModule from '../systems/ENVSysModule';
 import AIRCompSysModule from '../systems/AIRCompSysModule';
+import PIPEWTRTempSysModule from '../systems/PIPEWTRTempSysModule';
+import ELECTCompSysModule from '../systems/ELECTCompSysModule';
 import TDK_HVAC_PlanView from '../systems/svg/TDK_HVAC_PlanView';
 
-const Home = () => {
+const HomePage = () => {
 	// --------------------------
   const history = useHistory();
 	// --------------------------
@@ -30,17 +32,23 @@ const Home = () => {
   const [systemComponent, setSystemComponent] = useState(null);
   const [dataHeatMap,setHeatMap] = useState([]);
 	const [mTimer,setTimer] = useState(null);
-	// -------------
+	// --------------
 	let nCounter = 0;
+	// --------------
 	useEffect(()=> {
+		// -----------
+		user && user.companyname == "Nippon Glass" && history.push('/NipponGlass')
 		!isAuthenticated && history.push('/login');
+		// -----------
 		if (isAuthenticated)  {
 			// ----------
 			getSensors();
 			getNotification();
     	// getSensorsData();
 			getAllCompanies();
-			// ----------------
+			// ---------
+			// SET TIMER
+			// ---------
 			if (mTimer === null) {
 				const _mTimer = setInterval(handleTimer, 1000*60*1);
 				addTimer(_mTimer);
@@ -49,10 +57,9 @@ const Home = () => {
 	},[user])
   // --------------------------------------------
 	const handleTimer = () => {
-		// getSensors();
-		// console.log('...TIMER CALLED... HANDLER TIMER...');
-		// console.log('...GET SENSORS ...',new Date());
+		// ----------
 		getSensors();
+		// ----------
     // getSensorsData();
 		getNotification();
 		// getAlerts();
@@ -67,78 +74,81 @@ const Home = () => {
 	return (
     <main size="sm" style={{ marginTop: '2rem' }}>
 			<NotificationBoard />
-			<MDBContainer className="my-4">
+			<MDBContainer className="my-3">
 					<MDBCardGroup >
 
 						<MDBCard onClick={()=>setSelection('ENV_RH')} className={selection==='ENV_RH' && 'grey lighten-2'}>
 							<MDBIcon icon="temperature-high" size="3x" className="d-flex pt-4 justify-content-center" />
 							{/* <MDBCardImage src="https://mdbootstrap.com/img/Photos/Others/images/49.jpg" alt="MDBCard image cap" top hover overlay="white-strong" />								 */}
-							<MDBCardBody>
-								<MDBCardTitle tag="h5">ENVIRONMENTAL VARIABLES</MDBCardTitle>
-							</MDBCardBody>
-							<MDBCardFooter small muted>
-								Last updated 3 mins ago
-							</MDBCardFooter>
+							<MDBCardBody tag="h5">ENV. RH</MDBCardBody>
+							<MDBCardFooter small muted></MDBCardFooter>
 						</MDBCard>
 
-						{ user && (user.companyname != "AWC" && user.companyname != "IKN") && (
+						{ user && (user.companyname != "AWC" && user.companyname != "IKN" && user.companyname != "Nippon Glass") && (
 								<MDBCard onClick={()=>setSelection('AHU_AFLW')} className={selection==='AHU_AFLW' && 'grey lighten-2'}>
-									<MDBIcon fas icon="wind" size='3x' className="d-flex pt-4 justify-content-center"/>
+									<MDBIcon fas icon="wind" size='4x' className="d-flex pt-4 justify-content-center"/>
 									{/* <MDBCardImage src="https://mdbootstrap.com/img/Photos/Others/images/49.jpg" alt="MDBCard image cap" top hover overlay="white-strong" />								 */}
-									<MDBCardBody>
-										<MDBCardTitle tag="h5">AHU DUCT AIRFLOW</MDBCardTitle>
-									</MDBCardBody>
-									<MDBCardFooter small muted>
-										Last updated 3 mins ago
-									</MDBCardFooter>
+									<MDBCardBody tag="h5">AHU DUCT AIRFLOW</MDBCardBody>
+									<MDBCardFooter small muted></MDBCardFooter>
 								</MDBCard>
 						)}
-						{ user && (user.companyname != "AWC" && user.companyname != "IKN") && (
+						{ user && (user.companyname != "AWC" && user.companyname != "IKN" && user.companyname != "Nippon Glass") && (
 								<MDBCard onClick={()=>setSelection('AHU_ATMP')} className={selection==='AHU_ATMP' && 'grey lighten-2'}>
-									<MDBIcon icon='thermometer-half' size="3x" className="d-flex pt-4 justify-content-center" />
+									<MDBIcon icon='thermometer-half' size="4x" className="d-flex pt-4 justify-content-center" />
 									{/* <MDBCardImage src="https://mdbootstrap.com/img/Photos/Others/images/49.jpg" alt="MDBCard image cap" top hover overlay="white-strong" />								 */}
-									<MDBCardBody>
-										<MDBCardTitle tag="h5">AHU DUCT TEMPERATURE</MDBCardTitle>
-									</MDBCardBody>
-									<MDBCardFooter small muted>
-										Last updated 3 mins ago
-									</MDBCardFooter>
+									<MDBCardBody tag="h5">AHU DUCT TEMP.</MDBCardBody>
+									<MDBCardFooter small muted></MDBCardFooter>
 								</MDBCard>
 						)}
-						{ user && (user.companyname != "AWC" && user.companyname != "IKN") && (
-							<MDBCard onClick={()=>setSelection('SYS_COMPR')} className={selection==='SYS_COMPR' && 'grey lighten-2'}>
+						{ user && (user.companyname != "AWC" && user.companyname != "IKN" && user.companyname != "Nippon Glass") && (
+							<MDBCard onClick={()=>setSelection('SYS_AIR_COMPR')} className={selection==='SYS_COMPR' && 'grey lighten-2'}>
 								{/* <MDBIcon fas icon="wind" size='2x' className="d-flex pt-4 justify-content-center"/> */}
-								<MDBIcon fas icon="tachometer-alt" size="3x" className="d-flex pt-4 justify-content-center" />
+								<MDBIcon fas icon="tachometer-alt" size="4x" className="d-flex pt-4 justify-content-center" />
 								{/* <MDBCardImage src="https://mdbootstrap.com/img/Photos/Others/images/49.jpg" alt="MDBCard image cap" top hover overlay="white-strong" />								 */}
-								<MDBCardBody>
-									<MDBCardTitle tag="h5">AIR COMPRESSOR</MDBCardTitle>
-								</MDBCardBody>
-								<MDBCardFooter small muted>
-									Last updated 3 mins ago
-								</MDBCardFooter>
+								<MDBCardBody tag="h5">AIR CMPSR</MDBCardBody>
+								<MDBCardFooter small muted></MDBCardFooter>
 							</MDBCard>
 						)}
-						{ user && (user.companyname != "AWC" && user.companyname != "IKN") && (
-							<MDBCard onClick={()=>setSelection('SYS_HVAC')} className={selection==='SYS_HVAC' && 'grey lighten-2'}>
-								<MDBIcon far icon="snowflake" size="3x" className="d-flex pt-4 justify-content-center" />
-								{/* <MDBCardImage src="https://mdbootstrap.com/img/Photos/Others/images/49.jpg" alt="MDBCard image cap" top hover overlay="white-strong" />								 */}
-								<MDBCardBody>
-									<MDBCardTitle tag="h5">HVAC SYSTEM</MDBCardTitle>
-								</MDBCardBody>
-								<MDBCardFooter small muted>
-									Last updated 3 mins ago
-								</MDBCardFooter>
+
+						{ user && (user.companyname != "AWC" && user.companyname != "IKN" ) && (
+							<MDBCard onClick={()=>setSelection('SYS_PIPE_TEMP')} className={selection==='PIPE_TEMP' && 'grey lighten-2'}>
+								<MDBIcon icon="water" size="4x" className="d-flex pt-4 justify-content-center" />
+									<MDBCardBody tag="h5">WATER PIPE TEMP</MDBCardBody>
+									<MDBCardFooter small muted></MDBCardFooter>
 							</MDBCard>
 						)}
+
+
+						{ user && (user.companyname != "AWC" && user.companyname != "IKN" ) && (
+							<MDBCard onClick={()=>setSelection('SYS_ELECT')} className={selection==='SYS_ELECT' && 'grey lighten-2'}>
+								<MDBIcon far icon="lightbulb" size="4x" className="d-flex pt-4 justify-content-center" />
+									<MDBCardBody tag="h5">ELECT SYSTEM</MDBCardBody>
+									<MDBCardFooter small muted></MDBCardFooter>
+							</MDBCard>
+						)}
+
+						{ 
+							// user && (user.companyname != "AWC" && user.companyname != "IKN" && user.companyname != "Nippon Glass") && (
+							// <MDBCard onClick={()=>setSelection('SYS_HVAC')} className={selection==='SYS_HVAC' && 'grey lighten-2'}>
+							// 	<MDBIcon far icon="snowflake" size="4x" className="d-flex pt-4 justify-content-center" />
+							// 	{/* <MDBCardImage src="https://mdbootstrap.com/img/Photos/Others/images/49.jpg" alt="MDBCard image cap" top hover overlay="white-strong" />								 */}
+							// 	<MDBCardBody tag="h5">HVAC SYSTEM</MDBCardBody>
+							// 	<MDBCardFooter small muted></MDBCardFooter>
+							// </MDBCard>)
+							}
+						
 					</MDBCardGroup>
 			</MDBContainer>
+
 			{
 				selection && user && user.companyname && (
-				<MDBContainer>
+				<MDBContainer fluid>
 					{ selection === 'AHU_AFLW' && <AHUAirflowSysModule /> }
 					{ selection === 'AHU_ATMP' && <AHUAirTempSysModule /> }
 					{ selection === 'ENV_RH' && <ENVSysModule type='1' userCompanyName={user.companyname}/> }
-					{ selection === 'SYS_COMPR' && <AIRCompSysModule /> }
+					{ selection === 'SYS_AIR_COMPR' && <AIRCompSysModule /> }
+					{ selection === 'SYS_PIPE_TEMP' && <PIPEWTRTempSysModule /> }
+					{ selection === 'SYS_ELECT' && <ELECTCompSysModule /> }
 					{ selection === 'SYS_HVAC' && 
 							<TDK_HVAC_PlanView model='4' color='black' 
 								sensorsData={sensorsData} 
@@ -150,4 +160,4 @@ const Home = () => {
 	)
 }
 
-export default Home
+export default HomePage

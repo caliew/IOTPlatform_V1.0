@@ -33,7 +33,8 @@ const Notification = () => {
 			notifications.map( notice => {
 				let key = `${notice.dtuId}:${notice.sensorId}`;
 				if(sensorsArr.includes(key)) {
-					userNotificationArr.push(notice);
+					let _date = new Date(notice.date);
+					if (_date.getMonth() == new Date().getMonth()) userNotificationArr.push(notice);
 				}
 			})
 			// -------------

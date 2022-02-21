@@ -142,21 +142,26 @@ const SensorForm = ({SensorInfo,ClearSelectSensor}) => {
     // ----------------
     e.preventDefault();
     // ----------------
-    if (name === '' || dtuId === '' || sensorId === '' || type === '' || ratingMin === '' || ratingMax === '' || limits.length == 'undefined') {
+    if (name === '' || dtuId === '' || sensorId === '' || type === '' || ratingMin === '' || ratingMax === '' || limits.length === 'undefined') {
       // ------------------------------------
       setAlert('MISSING FIELD(S)', 'danger');
       // -------------------------------------
     } else {
       // -------------------------
       if (sensor === null) {
+        console.log(`[SENSORFOMR.JS] .. ADD SENSOR`)
         addSensor(sensor);
       } else {
-        console.log(sensor);
+        console.log(`[SENSORFOMR.JS] .. UPDATE SENSOR`)
         updateSensor(sensor);
       }
       clearAll();
     }
   };
+  const onSubmitAdd = () => {
+    console.log(sensor);
+    addSensor(sensor);
+  }
   // ----------------
   const clearAll = () => { ClearSelectSensor(); };
   // ----------------------
@@ -165,7 +170,8 @@ const SensorForm = ({SensorInfo,ClearSelectSensor}) => {
       <form onSubmit={onSubmit}>
 
         <MDBRow className="mb-3 justify-content-center">
-          <MDBBtn color="primary" onClick={onSubmit}>{sensor ? 'Update Sensor' : 'Add Sensor'}</MDBBtn>
+          {user && user.name ==="superuser" && <MDBBtn color="primary" onClick={onSubmitAdd}>{'Add Sensor'}</MDBBtn>}
+          <MDBBtn color="primary" onClick={onSubmit}>{'Update Sensor'}</MDBBtn>
           {sensor && <MDBBtn active color="primary" onClick={clearAll}>CLEAR</MDBBtn>}
         </MDBRow>
 
@@ -189,7 +195,7 @@ const SensorForm = ({SensorInfo,ClearSelectSensor}) => {
                    name='location' value={location} onChange={onChange}/></h6>
         </MDBCard >
 
-        { user.name.toLowerCase() == "superuser" &&
+        { user.name.toLowerCase() === "superuser" &&
 
           <MDBCard className='p-2 m-2'>
             <MDBContainer>

@@ -4,11 +4,22 @@ import "bootstrap-css-only/css/bootstrap.min.css";
 import "mdbreact/dist/css/mdb.css";
 import DateTimePicker from 'react-datetime-picker';
 import Calendar from 'react-awesome-calendar';
+import Lottie from 'react-lottie';
+import animationData from "../../lottie/43885-laptop-working.json";
 
 import "react-datepicker/dist/react-datepicker.css";
 import { MDBBtn, MDBBox, MDBCard, MDBIcon, MDBBadge, MDBContainer, MDBRow, MDBCol} from "mdbreact";
 // import "./index.css";
 
+// ---------------
+const defaultOptions = {
+	loop: true,
+	autoplay: true,
+	animationData: animationData,
+	rendererSettings: {
+		// preserveAspectRatio: "xMidYMid slice"
+	}
+};
 const InitEvents = [
   {
     id: 1,
@@ -165,9 +176,13 @@ const MaintScehduler = () => {
                 </MDBCol>
                 <MDBCol size="6">23°C</MDBCol>
               </MDBRow>
+
             </h4>
             <hr />
             <h4 className="text-uppercase text-center my-3">HIGHLIGHT</h4>
+            
+              <Lottie options={defaultOptions} height={200} width={200} />
+
           </MDBCol>
         </MDBRow>
       </MDBContainer>
@@ -207,6 +222,7 @@ class Event extends Component {
                 {this.props.description}
               </p>
             )}
+
           </div>
         </div>
       </React.Fragment>

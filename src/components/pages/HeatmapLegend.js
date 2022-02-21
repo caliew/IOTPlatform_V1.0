@@ -5,7 +5,8 @@ const HeatmapLegend = ({index,max,min}) => {
   let nCOUNT = 6;
   const diff = Number(max - min)/nCOUNT;
   const yLabels = ["LEG"];
-  const xLabels = new Array(nCOUNT+1).fill(0).map((_,i)=> Number(min) + Number(i*diff) )
+  const xLabels = [];
+  // const xLabels = new Array(nCOUNT+1).fill(0).map((_,i)=> Number(min) + Number(i*diff) )
   // console.log(min,max,diff,xLabels)
   // ------------------
   const data = new Array(1).fill(0).map(()=>new Array(nCOUNT+1).fill(0).map((_,i)=> Number(min) + Number(i*diff)))

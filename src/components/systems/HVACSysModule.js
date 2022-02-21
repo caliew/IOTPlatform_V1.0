@@ -28,8 +28,8 @@ import {
 
   AHU_A_TEMP1,AHU_A_TEMP2,AHU_A_FLOWRATE,AHU_A_ELECTPWR,
   AHU_B_TEMP1,AHU_B_TEMP2,AHU_B_FLOWRATE,AHU_B_ELECTPWR,
-  AHU_A_CHR_PRESS_1, AHU_A_CHR_PRESS_2, AHU_A_CHS_PRESS,
-  AHU_B_CHR_PRESS_1, AHU_B_CHR_PRESS_2, AHU_B_CHS_PRESS,
+  AHU_A_CHR_PRESS1, AHU_A_CHR_PRESS2, AHU_A_CHS_PRESS,
+  AHU_B_CHR_PRESS1, AHU_B_CHR_PRESS2, AHU_B_CHS_PRESS,
 
   CHILLER_A_CH_TEMP1, CHILLER_A_CH_TEMP2, CHILLER_A_CH_FLOWRATE, 
   CHILLER_A_CW_TEMP1, CHILLER_A_CW_TEMP2, CHILLER_A_CW_FLOWRATE,
@@ -55,27 +55,27 @@ const HVACSysModule = ({sensorsData,systemComponent}) => {
 					{sensorsData && systemComponent && systemComponent === 'AHU' && getThemrmometer( { 
 											title : 'AHU',
 											sensors : ['A_CHS','A_CHR','B_CHS','B_CHR'],
-											data : [ Number(sensorsData[AHU_A_TEMP1]), Number(sensorsData[AHU_A_TEMP2]), Number(sensorsData[AHU_B_TEMP1]), Number(sensorsData[AHU_B_TEMP2]) ],
+											data : [ sensorsData[AHU_A_TEMP1], sensorsData[AHU_A_TEMP2], sensorsData[AHU_B_TEMP1], sensorsData[AHU_B_TEMP2] ],
 											redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 					{sensorsData && systemComponent && systemComponent === 'AHU' && getDialGauge( { 
 							title : 'AHU (PRESSURE GAUGE)',
 							sensors : ['CHR_A_1','CHR_A_2','CHS_A','CHR_B_1','CHR_B_2','CHS_B'],
 							data : [['Label', 'Value'],
-											['psi',Number(sensorsData[CTW_A_TEMP1])], ['psi',Number(sensorsData[CTW_A_TEMP2])],
-											['psi',Number(sensorsData[CTW_A_TEMP1])], ['psi',Number(sensorsData[CTW_A_TEMP2])],
-											['psi',Number(sensorsData[CTW_A_TEMP1])], ['psi',Number(sensorsData[CTW_A_TEMP2])] ],
-							redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
+											['bar',Number(sensorsData['AHU_A_CHR_PRESS1'])/100], ['bar',Number(sensorsData['AHU_A_CHR_PRESS2'])/100],
+											['bar',Number(sensorsData['AHU_A_CHS_PRESS'])/100], ['bar',Number(sensorsData['AHU_B_CHR_PRESS1'])/100],
+											['bar',Number(sensorsData['AHU_B_CHR_PRESS2'])/100], ['bar',Number(sensorsData['AHU_B_CHS_PRESS'])/100] ],
+											redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 					{sensorsData && systemComponent && systemComponent === 'AHU' && getDialGauge( { 
 											title : 'AHU (FLOWRATE) COMPUTED',
 											sensors : ['A_CHS','B_CHS'],
 											data : [['Label', 'Value'],
-															['m3/s',Number(sensorsData[AHU_A_FLOWRATE])], ['m3/s',Number(sensorsData[AHU_B_FLOWRATE])] ],
+															['m3/s',sensorsData[AHU_A_FLOWRATE]], ['m3/s',sensorsData[AHU_B_FLOWRATE]] ],
 											redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 					{sensorsData && systemComponent && systemComponent === 'AHU' && getPowerMeter( { 
 							title : 'WCPU POWER METER',
 							sensors : ['AHU CLEAN ROOM','PRE-COOL FE','AHU-FE','DEHUMIDIFIER 1','DEHUMIDIFIER 2','DEHUMIDIFIER 3','HEAT EXCHANGER'],
 							data : [ ['Label', 'Value'],
-											['m3/s',Number(sensorsData[WCPU_A_FLOWRATE])], ['m3/s',Number(sensorsData[WCPU_B_FLOWRATE])] ],
+											['m3/s',sensorsData[WCPU_A_FLOWRATE]], ['m3/s',sensorsData[WCPU_B_FLOWRATE]] ],
 							redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 				</div>
 				{/* CHILLER */}
@@ -84,24 +84,24 @@ const HVACSysModule = ({sensorsData,systemComponent}) => {
 							title : 'CHILLER',
 							sensors : ['A_CHS','A_CHR','A_CWS','A_CWR','B_CHS','B_CHR','B_CWS','B_CWR'],
 							data : [ Number(sensorsData[CHILLER_A_CH_TEMP1]), Number(sensorsData[CHILLER_A_CH_TEMP2]), Number(sensorsData[CHILLER_A_CW_TEMP1]),
-											Number(sensorsData[CHILLER_A_CW_TEMP2]), Number(sensorsData[CHILLER_B_CH_TEMP1]), Number(sensorsData[CHILLER_B_CH_TEMP2]), 
-											Number(sensorsData[CHILLER_B_CW_TEMP1]), Number(sensorsData[CHILLER_B_CW_TEMP2]) ],
+											 Number(sensorsData[CHILLER_A_CW_TEMP2]), Number(sensorsData[CHILLER_B_CH_TEMP1]), Number(sensorsData[CHILLER_B_CH_TEMP2]), 
+											 Number(sensorsData[CHILLER_B_CW_TEMP1]), Number(sensorsData[CHILLER_B_CW_TEMP2]) ],
 							redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 					{sensorsData && systemComponent && systemComponent === 'CHILLER' && getDialGauge( { 
 							title : 'CHILLER A (PRESSURE GAUGE)',
 							sensors : ['CHS_A_1','CHS_A_2','CHR_A','CWS_A_1','CWS_A_2','CWR_A'],
 							data : [['Label', 'Value'],
-											['psi',Number(sensorsData[CTW_A_TEMP1])], ['psi',Number(sensorsData[CTW_A_TEMP2])],
-											['psi',Number(sensorsData[CTW_A_TEMP1])], ['psi',Number(sensorsData[CTW_A_TEMP2])],
-											['psi',Number(sensorsData[CTW_A_TEMP1])], ['psi',Number(sensorsData[CTW_A_TEMP2])] ],
+											['bar',Number(sensorsData[CHILLER_A_CHS_PRESS1])/100], ['bar',Number(sensorsData[CHILLER_A_CHS_PRESS2])/100],
+											['bar',Number(sensorsData[CHILLER_A_CHR_PRESS])/100], ['bar',Number(sensorsData[CHILLER_A_CWS_PRESS1])/100],
+											['bar',Number(sensorsData[CHILLER_A_CWS_PRESS2])/100], ['bar',Number(sensorsData[CHILLER_A_CWR_PRESS])/100] ],
 							redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 					{sensorsData && systemComponent && systemComponent === 'CHILLER' && getDialGauge( { 
 							title : 'CHILLER B (PRESSURE GAUGE)',
 							sensors : ['CHS_B_1','CHS_B_2','CHR_B','CWS_B_1','CWS_B_2','CWR_B'],
 							data : [['Label', 'Value'],
-											['psi',Number(sensorsData[CTW_A_TEMP1])], ['psi',Number(sensorsData[CTW_A_TEMP2])],
-											['psi',Number(sensorsData[CTW_A_TEMP1])], ['psi',Number(sensorsData[CTW_A_TEMP2])],
-											['psi',Number(sensorsData[CTW_A_TEMP1])], ['psi',Number(sensorsData[CTW_A_TEMP2])] ],
+											['bar',Number(sensorsData[CHILLER_B_CHS_PRESS1])/100], ['bar',Number(sensorsData[CHILLER_B_CHS_PRESS2])/100],
+											['bar',Number(sensorsData[CHILLER_B_CHR_PRESS])/100], ['bar',Number(sensorsData[CHILLER_B_CWS_PRESS1])/100],
+											['bar',Number(sensorsData[CHILLER_B_CWS_PRESS2])/100], ['bar',Number(sensorsData[CHILLER_B_CWR_PRESS])/100] ],
 							redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 					{sensorsData && systemComponent && systemComponent === 'CHILLER' && getDialGauge( { 
 							title : 'CHILLER (FLOW RATE) COMPUTED',
@@ -123,25 +123,25 @@ const HVACSysModule = ({sensorsData,systemComponent}) => {
 								{sensorsData && systemComponent && systemComponent === 'CTW' && getThemrmometer( { 
 										title : 'COOLING TOWER',
 										sensors : ['A_CWS','A_CWR','B_CWS','B_CWR'],
-										data : [Number(sensorsData[CTW_A_TEMP1]),Number(sensorsData[CTW_A_TEMP2]),Number(sensorsData[CTW_B_TEMP1]), Number(sensorsData[CTW_B_TEMP2]) ],
+										data : [sensorsData[CTW_A_TEMP1],sensorsData[CTW_A_TEMP2],sensorsData[CTW_B_TEMP1],sensorsData[CTW_B_TEMP2] ],
 										redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 						</Fragment>
 						<Fragment>
-								{sensorsData && systemComponent && systemComponent === 'CTW' && getDialGauge( { 
-										title : 'COOLING TOWER (PRESSURE GAUGE)',
-										sensors : ['CWS_A_1','CWS_A_2','CWR_A','CWS_B_1','CWS_B_2','CWR_B'],
-										data : [['Label', 'Value'],
-														['psi',Number(sensorsData[CTW_A_TEMP1])], ['psi',Number(sensorsData[CTW_A_TEMP2])],
-														['psi',Number(sensorsData[CTW_A_TEMP1])], ['psi',Number(sensorsData[CTW_A_TEMP2])],
-														['psi',Number(sensorsData[CTW_A_TEMP1])], ['psi',Number(sensorsData[CTW_A_TEMP2])] ],
-										redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
+							{sensorsData && systemComponent && systemComponent === 'CTW' && getDialGauge( { 
+									title : 'COOLING TOWER (PRESSURE GAUGE)',
+									sensors : ['CWS_A_1','CWS_A_2','CWR_A','CWS_B_1','CWS_B_2','CWR_B'],
+									data : [['Label', 'Value'],
+													['bar',Number(sensorsData[CTW_A_CWS_PRESS1])/100], ['bar',Number(sensorsData[CTW_A_CWS_PRESS2])/100],
+													['bar',Number(sensorsData[CTW_A_CWR_PRESS])/100], ['bar',Number(sensorsData[CTW_B_CWS_PRESS1])/100],
+													['bar',Number(sensorsData[CTW_B_CWS_PRESS2])/100], ['bar',Number(sensorsData[CTW_B_CWR_PRESS])/100] ],
+									redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 						</Fragment>
 						<Fragment>
 								{sensorsData && systemComponent && systemComponent === 'CTW' && getDialGauge( { 
 										title : 'COOLING TOWER (FLOW RATE) COMPUTED',
 										sensors : ['CWS_A','CWS_B'],
 										data : [['Label', 'Value'],
-														['m3/s',Number(sensorsData[CTW_A_TEMP1])], ['m3/s',Number(sensorsData[CTW_A_TEMP2])] ],
+														['m3/s',sensorsData[CTW_A_TEMP1]], ['m3/s',sensorsData[CTW_A_TEMP2]] ],
 										redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 						</Fragment>
 						<Fragment>
@@ -149,7 +149,7 @@ const HVACSysModule = ({sensorsData,systemComponent}) => {
 										title : 'WCPU POWER METER',
 										sensors : ['CTW_A','CTW_B'],
 										data : [ ['Label', 'Value'],
-														['m3/s',Number(sensorsData[WCPU_A_FLOWRATE])], ['m3/s',Number(sensorsData[WCPU_B_FLOWRATE])] ],
+														['m3/s',sensorsData[WCPU_A_FLOWRATE]], ['m3/s',sensorsData[WCPU_B_FLOWRATE]] ],
 										redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 						</Fragment>
 				</div>
@@ -159,7 +159,7 @@ const HVACSysModule = ({sensorsData,systemComponent}) => {
 								{sensorsData && systemComponent && systemComponent === 'WCPU' && getThemrmometer( { 
 										title : 'WCPU (TEMPERATURE)',
 										sensors : ['A_CWS','A_CWR','B_CWS','B_CWR'],
-										data : [ Number(sensorsData[WCPU_A_TEMP1]), Number(sensorsData[WCPU_A_TEMP2]), Number(sensorsData[WCPU_B_TEMP1]), Number(sensorsData[WCPU_B_TEMP2]) ],
+										data : [ sensorsData[WCPU_A_TEMP1], sensorsData[WCPU_A_TEMP2], sensorsData[WCPU_B_TEMP1], sensorsData[WCPU_B_TEMP2] ],
 										redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 						</Fragment>
 						<Fragment>
@@ -167,9 +167,9 @@ const HVACSysModule = ({sensorsData,systemComponent}) => {
 										title : 'WCPU (PRESSURE GAUGE)',
 										sensors : ['CWS_A_1','CWS_A_2','CWR_A','CWS_B_1','CWS_B_2','CWR_B'],
 										data : [['Label', 'Value'],
-														['psi',Number(sensorsData[CTW_A_TEMP1])], ['psi',Number(sensorsData[CTW_A_TEMP2])],
-														['psi',Number(sensorsData[CTW_A_TEMP1])], ['psi',Number(sensorsData[CTW_A_TEMP2])],
-														['psi',Number(sensorsData[CTW_A_TEMP1])], ['psi',Number(sensorsData[CTW_A_TEMP2])] ],
+														['bar',Number(sensorsData[WCPU_A_CWS_PRESS1])/100], ['bar',Number(sensorsData[WCPU_A_CWS_PRESS2])/100],
+														['bar',Number(sensorsData[WCPU_A_CWR_PRESS])/100], ['bar',Number(sensorsData[WCPU_B_CWS_PRESS1])/100],
+														['bar',Number(sensorsData[WCPU_B_CWS_PRESS2])/100], ['bar',Number(sensorsData[WCPU_B_CWR_PRESS])/100] ],
 										redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 						</Fragment>
 						<Fragment>
@@ -177,7 +177,7 @@ const HVACSysModule = ({sensorsData,systemComponent}) => {
 										title : 'WCPU (FLOW RATE) COMPUTED',
 										sensors : ['CWS_A','CWS_B'],
 										data : [ ['Label', 'Value'],
-														['m3/s',Number(sensorsData[WCPU_A_FLOWRATE])], ['m3/s',Number(sensorsData[WCPU_B_FLOWRATE])] ],
+														['m3/s',sensorsData[WCPU_A_FLOWRATE]], ['m3/s',sensorsData[WCPU_B_FLOWRATE]] ],
 										redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 						</Fragment>
 						<Fragment>
@@ -185,7 +185,7 @@ const HVACSysModule = ({sensorsData,systemComponent}) => {
 										title : 'WCPU POWER METER',
 										sensors : ['WCPU_B'],
 										data : [ ['Label', 'Value'],
-														['m3/s',Number(sensorsData[WCPU_A_FLOWRATE])], ['m3/s',Number(sensorsData[WCPU_B_FLOWRATE])] ],
+														['m3/s',sensorsData[WCPU_A_FLOWRATE]], ['m3/s',sensorsData[WCPU_B_FLOWRATE]] ],
 										redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 						</Fragment>
 				</div>
@@ -196,7 +196,7 @@ const HVACSysModule = ({sensorsData,systemComponent}) => {
 										title : 'AHU PUMP POWER METER',
 										sensors : ['CHWP_1','CHWP_2','CHWP_3'],
 										data : [ ['Label', 'Value'],
-														['m3/s',Number(sensorsData[WCPU_A_FLOWRATE])], ['m3/s',Number(sensorsData[WCPU_B_FLOWRATE])] ],
+														['m3/s',sensorsData[WCPU_A_FLOWRATE]], ['m3/s',sensorsData[WCPU_B_FLOWRATE]] ],
 										redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 						</Fragment>
 				</div>
@@ -207,7 +207,7 @@ const HVACSysModule = ({sensorsData,systemComponent}) => {
 										title : 'CTW PUMP POWER METER',
 										sensors : ['CWP_1','CWP_2','CWP_3'],
 										data : [ ['Label', 'Value'],
-														['m3/s',Number(sensorsData[WCPU_A_FLOWRATE])], ['m3/s',Number(sensorsData[WCPU_B_FLOWRATE])] ],
+														['m3/s',sensorsData[WCPU_A_FLOWRATE]], ['m3/s',sensorsData[WCPU_B_FLOWRATE]] ],
 										redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 						</Fragment>
 				</div>
@@ -232,7 +232,7 @@ const HVACSysModule = ({sensorsData,systemComponent}) => {
 					<Fragment>
 									{ sensorsData && systemComponent && systemComponent === 'AHU' &&  <SparklinePlots systemComponent = {systemComponent}
 													sensorsData={null} 
-													dataNames={ [AHU_A_CHR_PRESS_1,AHU_A_CHR_PRESS_2,AHU_A_CHS_PRESS,AHU_B_CHR_PRESS_1,AHU_B_CHR_PRESS_2,AHU_B_CHS_PRESS] }/> }
+													dataNames={ [AHU_A_CHR_PRESS1,AHU_A_CHR_PRESS2,AHU_A_CHS_PRESS,AHU_B_CHR_PRESS1,AHU_B_CHR_PRESS2,AHU_B_CHS_PRESS] }/> }
 					</Fragment>
 					<Fragment>
 									{ sensorsData && systemComponent && systemComponent === 'AHU' &&  <SparklinePlots systemComponent = {systemComponent}
@@ -354,10 +354,11 @@ const getDialGauge = ({title,sensors,data}) => {
                                         loader={<div>Loading Chart</div>}
                                         data={_gauge}
                                         options={{
-                                                redFrom: 90,
-                                                redTo: 100,
-                                                yellowFrom: 75,
-                                                yellowTo: 90,
+																								max: 6,
+                                                redFrom: 5,
+                                                redTo: 6,
+                                                yellowFrom: 4,
+                                                yellowTo: 5,
                                                 minorTicks: 5,}}
                                         rootProps={{ 'data-testid': '1' }}
                                 />
@@ -419,12 +420,6 @@ const getPowerMeter = (data) => {
 //  -----------
 //  RANDOM DATA
 //  -----------
-const randomData = n =>
-  Array.range(n).map((_, i) => ({
-    y: Math.random() * (Math.random() > 0.2 ? 1 : 2),
-    x: `${i + 1}`,
-  }));
-
 function randomExtend(minNum, maxNum) {
   if (arguments.length === 1) {
     return parseInt(Math.random() * minNum + 1, 10)

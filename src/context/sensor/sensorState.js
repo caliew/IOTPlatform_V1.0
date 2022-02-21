@@ -42,6 +42,7 @@ const SensorState = props => {
   const getSensors = async () => {
     try {
       // --------------------------------
+      let _time = new Date();
       const params = { totalLines : 100, id: user._id };
       axios.get('/api/sensors', { params } ).then (res => {
         // ----------------
@@ -63,16 +64,13 @@ const SensorState = props => {
   // rawsensordata
   const getRawSensors = async() => {
     try {
-      console.log('....GET API/SENSORS/RAWSENSORDATA....')
+      console.log('[SENSORSTATE.JS]....GET API/SENSORS/RAWSENSORDATA....')
       // --------------------------------
       axios.get('/api/sensors/rawsensordata', { } ).then (res => {
         // ----------------
         dispatch({type: SET_RAWSENSORS,payload: res.data});
         // ----------------
       }).then( res => {
-        // --------------    
-        // getSensorsData();
-        // --------------
       }).catch ( err => {
         dispatch({
           type: SENSOR_ERROR

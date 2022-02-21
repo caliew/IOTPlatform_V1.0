@@ -11,7 +11,7 @@ const Admin = () => {
 	return (
     <main style={{ marginTop: '2rem' }}>
 			{ user && user.name ==="superuser"  && <NotificationMngt /> }
-			<SensorDirectory />
+			<SensorDirectory/>
 	</main>
 	)
 }

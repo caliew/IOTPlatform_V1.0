@@ -30,7 +30,7 @@ import {
 // REFERENCE SVG DATA FROM 
 // '../components/svg/TDK_ISOVIEW.svg'
 
-function AHUAirTempSysModule ({ model, color, systemComponent, handleComponetSelection, title, type }) {
+function PIPEWTRTempSysModule ({ model, color, systemComponent, handleComponetSelection, title, type }) {
     // -----------
     const [airFlowSensors, setAFSensor] = useState([]);
     const [sensorLabels, setSensorLabels] = useState([]);
@@ -42,8 +42,10 @@ function AHUAirTempSysModule ({ model, color, systemComponent, handleComponetSel
     const { sensors, sensorsData, filtered, getSensors, loading, } = sensorContext;
     // --------------
     useEffect(()=>{
+      // ---------------------
         if (sensors === null) getSensors();
         abstactAIRFLOWSensor();
+        // ---------------------
     },[sensors])
     // ---------------------------
     const abstactAIRFLOWSensor = () => {
@@ -56,8 +58,9 @@ function AHUAirTempSysModule ({ model, color, systemComponent, handleComponetSel
         let _sLabels = [];
 				let _plotDatas = [];
         let _airflowDatas = [];
+        // -------------------
         sensors.map( sensor => {
-					if (sensor.type === 'AIRRH(485)') {
+					if (sensor.type === "WTRTEMP(485)") {
 						let { datas } = getDatas(sensor);
 						_AFSensors.push(sensor);
 						_sLabels.push(sensor.name);
@@ -75,16 +78,6 @@ function AHUAirTempSysModule ({ model, color, systemComponent, handleComponetSel
         setShowHide(!showHide);
         if (handleComponetSelection !== null) handleComponetSelection('AIRRH'); 
     }
-    // --------------
-    const componentNames = {
-        sysCHILLER : 'CHILLER',
-        sysAHU : 'AHU',
-        sysWCPU : 'WCPU',
-        sysCTW : "CTW",
-        pumpCHILLER : "CH PUMP",
-        pumpCTW : "CTW PUMP",
-        pumpAHU : "AHU PUMP"
-    }
     // --------------------------------------------
     // fill='green' stroke='black' stroke-width='1'
     // width="645" height="459" viewBox="0 0 645 459"
@@ -93,7 +86,7 @@ function AHUAirTempSysModule ({ model, color, systemComponent, handleComponetSel
 			<MDBRow center>
 
 				<MDBCard className="p-3 m-2" style={{ width: "40rem" }}>
-					<MDBCardTitle>WATER PIPE TEMPERATURE</MDBCardTitle>
+					<MDBCardTitle>AHU DUCT TEMPERATURE</MDBCardTitle>
 					<MDBTable striped small>
 						<MDBTableBody>
 						{
@@ -179,9 +172,9 @@ function getDatas(sensor) {
   return { datas,maxVelDateTime,minVelDateTime,maxVel,minVel,rmsVel };
 }
 //  -----------
-AHUAirTempSysModule .defaultProps = {
+PIPEWTRTempSysModule .defaultProps = {
   color: "black",
   handleComponetSelection: null,
   title:'PRODUCTION FLOOR PLAN'
 };
-export default AHUAirTempSysModule 
+export default PIPEWTRTempSysModule 

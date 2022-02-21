@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { HeatMapGrid } from "react-grid-heatmap";
 import HeatmapLegend from "./HeatmapLegend";
-import HeatMapLegend from './HeatmapLegend';
-
 
 function randomExtend(minNum, maxNum) {
   if (arguments.length === 1) {

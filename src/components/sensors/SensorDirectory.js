@@ -5,7 +5,7 @@ import SensorFilter from './SensorFilter';
 import { MDBContainer,MDBRow,MDBCol, MDBBtn, 
          MDBCard, MDBCardBody, MDBCardImage, MDBCardTitle, MDBCardText } from 'mdbreact';
 
-const SensorDirectory = () => {
+const SensorDirectory = ({user}) => {
   // -------------
   const [SensorInfo,setSensor] = useState(null);
   const [Delete, setDelete] = useState(false);

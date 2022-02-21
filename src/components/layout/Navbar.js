@@ -31,28 +31,31 @@ const Navbar = (props) => {
     window.scrollTo(0, 0);
     collapseID === collID && setCollapseID('');
   };
-  //  -------------
+  // ---------------
   const authLinks = (
     <MDBNavbarNav right>
-      { user && (user.companyname != "AWC" && user.companyname != "IKN" ) && 
+      { user && (user.companyname != "AWC" && user.companyname != "IKN"  && user.companyname != "Nippon Glass") && 
         <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/BigDATAView' className='white-text'>VISZ</Link></MDBNavItem>
       }
-      { user && (user.companyname != "AWC" && user.companyname != "IKN") && 
+      { user && (user.companyname != "AWC" && user.companyname != "IKN" && user.companyname != "SuaraKOM" && user.companyname != "TDK") && 
+        <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/NipponGlass' className='white-text'>NIPPON</Link></MDBNavItem>
+      }
+      { user && (user.companyname != "AWC" && user.companyname != "IKN" && user.companyname != "Nippon Glass") && 
         <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/test' className='white-text'>TEST</Link></MDBNavItem>
       }
 
       <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/' className='white-text'>HOME</Link></MDBNavItem>
 
-      { user && (user.companyname != "AWC" && user.companyname != "IKN") && 
+      { user && (user.companyname != "AWC" && user.companyname != "IKN" && user.companyname != "Nippon Glass") && 
           <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/cmms' className='white-text'>CMMS</Link></MDBNavItem>
       }
 
-      { user && user.usertype === "administrator" && 
-          <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/admin' className='white-text'>ADMIN</Link></MDBNavItem> }
-      { user && user.usertype === "superuser" && 
+      { user && (user.usertype === "administrator" || user.usertype === "superuser" ) &&
           <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/admin' className='white-text'>ADMIN</Link></MDBNavItem> }
 
-      <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/report' className='white-text'>REPORT</Link></MDBNavItem>
+      { user && user.usertype === "administrator" && 
+          <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/report' className='white-text'>REPORT</Link></MDBNavItem> }
+
       <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/about' className='white-text'>ABOUT</Link></MDBNavItem>
       <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>onLogout()} to='/login' className='white-text'>LOGOUT</Link></MDBNavItem>
     </MDBNavbarNav>
@@ -72,16 +75,16 @@ const Navbar = (props) => {
       onClick={()=>toggleCollapse('mainNavbarCollapse')}
     />
   );
-  // -----
+  // ----- viewBox="0 0 850.4 178.6"
   return (
     <div className='flyout'>
         <MDBNavbar color='indigo' dark expand='md' fixed='top' scrolling>
           <MDBNavbarBrand href='/' className='py-0 font-weight-light'>
             {
-              user &&  (user.companyname == "AeroSOFT Technologies Pte Ltd" || user.companyname == "TDK" ||
+              user &&  (user.companyname == "AeroSOFT Technologies Pte Ltd" || user.companyname == "TDK" || 
                         user.companyname == "SuaraKOM" ) ? (
                 <a class="navbar-brand" href="/en">
-                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 850.4 178.6" fill={'white'}>
+                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 850.4 178.6" height="25px" preserveAspectRatio="none" fill={'white'}>
                 <polygon points="103.1,37.8 65.3,75.6 140.8,75.6 "></polygon>
                 <polygon points="103.1,140.8 154.6,127 140.8,75.5 "></polygon>
                 <polygon points="154.6,127 168.4,178.6 206.2,113.2 "></polygon>
@@ -97,7 +100,8 @@ const Navbar = (props) => {
                 <rect x="638.9" width="48.7" height="178.5"></rect>
                 <polygon points="689,85.3 780.7,0 845.2,0 749.1,85.3 850.4,178.5 783,178.5 "></polygon>
                 </svg>
-                <span>TDK Electronics · TDK Europe</span>
+                {/* <span>TDK Electronics · TDK Europe</span> */}
+                <span> TDK ELECTRONICS MALAYSIA </span>
                 </a>                          
               ) : (
                 <>

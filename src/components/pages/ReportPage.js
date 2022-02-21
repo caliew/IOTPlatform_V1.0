@@ -1,5 +1,7 @@
 import React, { useContext,useState,useEffect,useRef } from 'react';
 import { CSVDownload,CSVLink } from 'react-csv';
+import { saveAs } from 'file-saver';
+import axios from 'axios';
 import Spinner from '../layout/Spinner';
 import SensorContext from '../../context/sensor/sensorContext';
 import AlertContext from '../../context/alert/alertContext';
@@ -16,12 +18,13 @@ const ReportPage = () => {
   const linkRef = useRef();
   // -----------
   const [wiSensors, setWiSensor] = useState([]);
+  const [reportSensors, setReportSensors] = useState([]);
   const [sensorStatsData, setSensorStats] = useState([]);
   const [fileName, setFileName] = useState('Clue_Mediator_Report_Async.csv');
   const [headers,setHeaders] = useState([]);
   const [reportData,setReportData] = useState([]);
   const sensorContext = useContext(SensorContext);
-  const { sensors, DownLoadData, AbstractSensorStats,  getSensors } = sensorContext;
+  const {sensors, DownLoadData, AbstractSensorStats,  getSensors } = sensorContext;
   // --------------
   const csvReport = {
     data: reportData,
@@ -45,12 +48,14 @@ const ReportPage = () => {
       // -----------------
       let _sLabels = [];
       let _wiSensors = [];
+      let _sensorIDs = [];
       let _tempDatas = [];
       let _humdDatas = [];
       // -----------------
       sensors.map( sensor => {
         if (sensor.type === 'WISENSOR') {
             _wiSensors.push(sensor);
+            _sensorIDs.push(`${sensor._id}`)
             _sLabels.push(sensor.name);
             sensor.logsdata[0] && _tempDatas.push(Number(sensor.logsdata[0].Temperature));
             sensor.logsdata[0] && _humdDatas.push(['HUMD',Number(sensor.logsdata[0].Humidity)]);
@@ -59,6 +64,7 @@ const ReportPage = () => {
       })
       // ---------------------
       setWiSensor(_wiSensors);
+      setReportSensors(_sensorIDs);
       abstractSensorsStats(_wiSensors);
       // --------------------
   }
@@ -101,15 +107,73 @@ const ReportPage = () => {
 		for (let i=0; i< logsdata.length; i++) {
 			const {modelID,modelType,TIMESTAMP,Temperature,Humidity}  = logsdata[i];
 			const _date = new Date(TIMESTAMP);
-			let data = { date:_date.toLocaleDateString(), time:_date.toLocaleTimeString(),
+			let data = { date:_date.toLocaleDateString(), time:`${_date.toLocaleDateString()} ${_date.toLocaleTimeString()}`,
 						modelID:modelID,Temperature,Humidity}
 			_reportData.push(data);
 		}
 		setReportData(_reportData);
 	}
+  const createAndDownloadPdf = () => {
+    let sensorsState = {
+      name : '',
+      receiptId : 0,
+      price1 : 0,
+      price2 : 0,
+      reportSensors : reportSensors
+    }
+    console.log('.. AXIOS APIS.... /CREATE-PDF')
+    try {
+      axios.post('/create-pdf',sensorsState)
+        .then(() => axios.get('/fetch-pdf', {responseType:'blob'}))
+        .then((res) => {
+          console.log('.. AXIOS APIS.... /FETCH-PDF');
+          const pdfBlob = new Blob([res.data],{type:'application/pdf'});
+          saveAs(pdfBlob,'Report.pdf');
+        })
+    }
+    catch {
+    }
+  }
+  // ------
+  const DownloadPdfNOV = () => {
+    console.log('..AXIOS APIS.... /FETCH-PDF-NOV');
+    try {
+      axios.get('/fetch-pdf-NOV2021', {responseType:'blob'}).then((res)=>{
+        const pdfBlob = new Blob([res.data],{type:'application/pdf'});
+        saveAs(pdfBlob,'NOV2021-Report.pdf');
+      })
+    } catch{
+
+    }
+  }
+  const DownloadPdfDEC = () => {
+    console.log('..AXIOS APIS.... /FETCH-PDF-DEC');
+    try {
+      axios.get('/fetch-pdf-DEC2021', {responseType:'blob'}).then((res)=>{
+        const pdfBlob = new Blob([res.data],{type:'application/pdf'});
+        saveAs(pdfBlob,'DEC2021-Report.pdf');
+      })
+    } catch{
+
+    }
+  }
+  const DownloadPdfJAN = () => {
+    console.log('..AXIOS APIS.... /FETCH-PDF-DEC');
+    try {
+      axios.get('/fetch-pdf-JAN2022', {responseType:'blob'}).then((res)=>{
+        const pdfBlob = new Blob([res.data],{type:'application/pdf'});
+        saveAs(pdfBlob,'JAN2022-Report.pdf');
+      })
+    } catch{
+
+    }
+  }
   // ---------------------------
   return(
     <main style={{ marginTop: '2rem' }}>
+      <MDBBtn onClick={()=>DownloadPdfNOV()}>NOV 2021 REPORT</MDBBtn>
+      <MDBBtn onClick={()=>DownloadPdfDEC()}>DEC 2021 REPORT</MDBBtn>
+      <MDBBtn onClick={()=>DownloadPdfJAN()}>JAN 2022 REPORT</MDBBtn>
       <div className="d-flex flex-row justify-content-center flex-wrap" >
       {
         wiSensors.length === 0 ? <Spinner /> : wiSensors.map((sensor,index) => {
@@ -157,7 +221,7 @@ const getTableSensorInfo = (sensor) => (
         <th>LOCATION</th>
         <th>LAST READING</th>
       </tr>
-    </MDBTableHead>              
+    </MDBTableHead>
     <MDBTableBody>
       <tr >
         <td >{sensor.name}</td>
