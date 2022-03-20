@@ -39,14 +39,14 @@ export default () => {
     // ----------------------------------
     // CALL SENSOR REDUCER TO UPDATE DATA
     // ----------------------------------
-    getSensorsData();
+    getSensorsData(100);
   }
   // --------------
   useEffect(() => {
       // -------------
       // createData();
       // -------------
-      getSensorsData();
+      getSensorsData(100);
       const timer = setInterval(createData, 5000)
       return () => clearInterval(timer)
   }, [])

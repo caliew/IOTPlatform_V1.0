@@ -242,10 +242,11 @@ function createData(sensors) {
     PWRMTR_23 : findSensor(sensors,4,1),
     PWRMTR_24 : findSensor(sensors,4,2),
     PWRMTR_25 : findSensor(sensors,5,1),
-    PWRMTR_26 : findSensor(sensors,6,1),
-    PWRMTR_27 : findSensor(sensors,6,2),
-    PWRMTR_28 : findSensor(sensors,7,1),
-    PWRMTR_29 : findSensor(sensors,7,2),
+    PWRMTR_26 : findSensor(sensors,5,2),
+    PWRMTR_27 : findSensor(sensors,6,1),
+    PWRMTR_28 : findSensor(sensors,6,2),
+    PWRMTR_29 : findSensor(sensors,7,1),
+    PWRMTR_30 : findSensor(sensors,7,2),
 
     NIPPON_1: findSensor(sensors,50,101)
 
@@ -254,11 +255,23 @@ function createData(sensors) {
 }
 // -------
 export default (state, action) => {
+  // ----------------
   switch (action.type) {
     case SET_SENSORS:
+      let _map = action.payload.reduce((map,sensor) => { 
+        if (map[sensor.type] === undefined) {
+          map[sensor.type] = [];
+          map[sensor.type].push(sensor);
+        } else {
+          map[sensor.type].push(sensor); 
+        };
+        return map; },{}
+        );
       return {
         ...state,
         sensors: action.payload,
+        wisensors:action.payload.filter(el => el.type === 'WISENSOR'),
+        sensorTypeMap : _map,
         locationSensorsMap : action.payload.reduce((map,sensor) => { 
             if (map[sensor.location] === undefined) {
             map[sensor.location] = [];
@@ -330,7 +343,7 @@ export default (state, action) => {
       return {
         ...state,
         filtered: state.sensors.filter(sensor => {
-          return sensor.name.match(regex) || sensor.type.match(regex) || sensor.dtuId.match(regex) || sensor.sensorId.match(regex) || sensor.location.match(regex);
+          return sensor.name.match(regex) || sensor.type.match(regex) || sensor.dtuId.match(regex) || sensor.sensorId.match(regex);
         })
       };
     case CLEAR_FILTER_SENSORS:

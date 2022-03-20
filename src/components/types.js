@@ -157,6 +157,7 @@ export const PWRMTR_26 = 'PWRMTR_26';
 export const PWRMTR_27 = 'PWRMTR_27';
 export const PWRMTR_28 = 'PWRMTR_28';
 export const PWRMTR_29 = 'PWRMTR_29';
+export const PWRMTR_30 = 'PWRMTR_30';
 
 export const NIPPON_1 = 'NIPPON_1';
 

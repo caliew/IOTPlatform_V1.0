@@ -32,7 +32,7 @@ function TDK_PlanVIEW({ model, color, sensorsData, systemComponent, handleCompon
     const { sensors, getSensors } = sensorContext;
     // --------------
     useEffect(()=>{
-        if (sensors === null) getSensors();
+        if (sensors === null) getSensors(30,null,null);
         abstactCOMPTSensor(systemComponent);
     },[systemComponent])
     // ---------------------------

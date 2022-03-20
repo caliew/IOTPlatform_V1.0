@@ -39,10 +39,10 @@ function AHUAirTempSysModule ({ model, color, systemComponent, handleComponetSel
     const [showHide, setShowHide] = useState(true);
 		// --------------------------
     const sensorContext = useContext(SensorContext);
-    const { sensors, sensorsData, filtered, getSensors, loading, } = sensorContext;
+    const { sensors, getSensors } = sensorContext;
     // --------------
     useEffect(()=>{
-        if (sensors === null) getSensors();
+        if (sensors === null) getSensors(30,null,null);
         abstactAIRFLOWSensor();
     },[sensors])
     // ---------------------------
@@ -62,28 +62,18 @@ function AHUAirTempSysModule ({ model, color, systemComponent, handleComponetSel
 						_AFSensors.push(sensor);
 						_sLabels.push(sensor.name);
 						_plotDatas.push(datas);
-						sensor.logsdata[0] && _airflowDatas.push(Number(sensor.logsdata[0].DATAS[1])/10.0);
+            let _dataObj = {
+              name : sensor.name,
+              temperature : Number(sensor.logsdata[0].DATAS[1])/10.0
+            }
+						sensor.logsdata[0] && _airflowDatas.push(_dataObj);
 					}
         })
         // --------------------
         setAFSensor(_AFSensors.sort(compareByName));
         setSensorLabels(_sLabels);
-        setAFlowData(_airflowDatas);
+        setAFlowData(_airflowDatas.sort(compareByName));
 				setPlotDatas(_plotDatas);
-    }
-    const handleShowHide = () => { 
-        setShowHide(!showHide);
-        if (handleComponetSelection !== null) handleComponetSelection('AIRRH'); 
-    }
-    // --------------
-    const componentNames = {
-        sysCHILLER : 'CHILLER',
-        sysAHU : 'AHU',
-        sysWCPU : 'WCPU',
-        sysCTW : "CTW",
-        pumpCHILLER : "CH PUMP",
-        pumpCTW : "CTW PUMP",
-        pumpAHU : "AHU PUMP"
     }
     // --------------------------------------------
     // fill='green' stroke='black' stroke-width='1'
@@ -93,7 +83,7 @@ function AHUAirTempSysModule ({ model, color, systemComponent, handleComponetSel
 			<MDBRow center>
 
 				<MDBCard className="p-3 m-2" style={{ width: "40rem" }}>
-					<MDBCardTitle>WATER PIPE TEMPERATURE</MDBCardTitle>
+					<MDBCardTitle>HVAC DUCT TEMPERATURE</MDBCardTitle>
 					<MDBTable striped small>
 						<MDBTableBody>
 						{
@@ -134,11 +124,11 @@ function getThemrmometer(data) {
     // <div className="d-flex flex-row align-items-center justify-content-center" >
     <MDBRow>
 
-      {data.data.sort().map((tempReading, index) => (
+      {data.data.sort().map((_data, index) => (
         <MDBCol md="3">
           {/* <div className="d-flex flex-column px-4 align-items-center " > */}
-          <Thermometer reverseGradient='true' theme="dark" value={tempReading} max="35" steps="1" format="°C" size="small" height="120" />
-          <h6>{data.sensors[index]}</h6>
+          <Thermometer reverseGradient='true' theme="dark" value={_data.temperature} max="35" steps="1" format="°C" size="small" height="120" />
+          <h6>{_data.name}</h6>
           {/* </div> */}
         </MDBCol>
       ))}

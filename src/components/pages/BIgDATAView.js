@@ -11,7 +11,7 @@ import DataV from '../datav'
 const BigDATAView = ({userCompanyName="TDK"}) => {
   // -----------
   const sensorContext = useContext(SensorContext);  
-  const { filterSensors, sensorsData, getSensorsData, clearFilter, filtered } = sensorContext;
+  const { filterSensors, sensorsData, wisensors } = sensorContext;
 
   let viewBoxData = (userCompanyName === "AWC" || userCompanyName === "IKN")  ? "0 0 1542 583" : "0 0 700 534";
   const getFloorPlan = () => {
@@ -31,7 +31,7 @@ const BigDATAView = ({userCompanyName="TDK"}) => {
     <div class="container-fluid mb-4 mt-n3">
       {/* <DataV /> */}
       {/* <MDBContainer> */}
-        <TDK_HVAC_FPAGE color='black' sensorsData={sensorsData}/>
+        <TDK_HVAC_FPAGE color='black' sensorsData={sensorsData} wisensors={wisensors}/>
 				{/* <MDBCard className="px-4 py-4 m-2" style={{width:`${MDBRowWidth()}px`}}>
 						width="700" height="534" 
 						{ getFloorPlan() }

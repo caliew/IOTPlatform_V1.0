@@ -50,10 +50,14 @@ const Navbar = (props) => {
           <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/cmms' className='white-text'>CMMS</Link></MDBNavItem>
       }
 
+      { user && (user.companyname != "AWC" && user.companyname != "Nippon Glass") && 
+          <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/charting' className='white-text'>CHARTS</Link></MDBNavItem>
+      }
+
       { user && (user.usertype === "administrator" || user.usertype === "superuser" ) &&
           <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/admin' className='white-text'>ADMIN</Link></MDBNavItem> }
 
-      { user && user.usertype === "administrator" && 
+      { user && (user.usertype === "administrator" || user.usertype === "superuser" || user.usertype === "user") &&
           <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/report' className='white-text'>REPORT</Link></MDBNavItem> }
 
       <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/about' className='white-text'>ABOUT</Link></MDBNavItem>

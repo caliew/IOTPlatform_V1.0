@@ -41,7 +41,7 @@ function ENVSysModule({ systemComponent, handleComponetSelection, type, userComp
     const { sensors, getSensors } = sensorContext;
     // --------------
     useEffect(()=>{
-        if (sensors === null) getSensors();
+        if (sensors === null) getSensors(30,null,null);
         abstactWiSensor();
     },[sensors])
     // ---------------------------
@@ -54,18 +54,20 @@ function ENVSysModule({ systemComponent, handleComponetSelection, type, userComp
 			let _wiSensors = [];
 			let _sLabels = [];
 			let _tempDatas = [];
-			let _plotDatas = [];
-			let _humdDatas = [];
       // ----------------------
 			sensors.forEach( sensor => {
         // -----------------------
         if (sensor.type === 'WISENSOR') {
+          // ----------------------------
           let { datas } = getDatas(sensor);
           _wiSensors.push(sensor);
-          _sLabels.push(sensor.name);
-          _plotDatas.push(datas);
-          sensor.logsdata[0] && _tempDatas.push(Number(sensor.logsdata[0].Temperature.toFixed(1)));
-          sensor.logsdata[0] && _humdDatas.push(['HUMD',Number(sensor.logsdata[0].Humidity)]);
+          // -----------------
+          let _sensorObj = {
+            name : sensor.name,
+            temperature : Number(sensor.logsdata[0].Temperature.toFixed(1)),
+            humidity : Number(sensor.logsdata[0].Humidity)
+          }
+          sensor.logsdata[0] && _tempDatas.push(_sensorObj);
         };
         // ---------
         let ObjSensor = sensorLocationMap[sensor.sensorId];
@@ -78,20 +80,7 @@ function ENVSysModule({ systemComponent, handleComponetSelection, type, userComp
       });
       // --------------------
 			setWiSensor(_wiSensors.sort(compareByName));
-			setSensorLabels(_sLabels);
-			setTempData(_tempDatas);
-			setHUmdData(_humdDatas);
-			setPlotDatas(_plotDatas);
-    }
-    // --------------
-    const componentNames = {
-        sysCHILLER : 'CHILLER',
-        sysAHU : 'AHU',
-        sysWCPU : 'WCPU',
-        sysCTW : "CTW",
-        pumpCHILLER : "CH PUMP",
-        pumpCTW : "CTW PUMP",
-        pumpAHU : "AHU PUMP"
+			setTempData(_tempDatas.sort(compareByName));
     }
     // --------------------------------------------
     // fill='green' stroke='black' stroke-width='1'
@@ -106,11 +95,11 @@ function ENVSysModule({ systemComponent, handleComponetSelection, type, userComp
         {/* </MDBCard> */}
 
 				<MDBCard className="p-3 m-2" style={{ width: "40rem" }}>
-          <MDBCardTitle>ENV. TEMPERATURE</MDBCardTitle>
+          <MDBCardTitle>ENV. TEMPERATURE, RH & ABS</MDBCardTitle>
           <MDBTable striped small>
             <MDBTableBody>
             {
-                wiSensors && wiSensors.sort().map( (sensor,index) => { return (<SensorList companyName={userCompanyName} sensor={sensor} index={index} />)})
+                wiSensors && wiSensors.map( (sensor,index) => { return (<SensorList companyName={userCompanyName} sensor={sensor} index={index} />)})
             }
             </MDBTableBody>
           </MDBTable>
@@ -278,11 +267,11 @@ const getThemrmometer = (data) => {
     <MDBRow>
 
         {
-          data.data.map( (tempReading,index) => (
+          data.data.sort().map( (_data,index) => (
             <MDBCol md="3">
             {/* <div className="d-flex flex-column px-4 align-items-center " > */}
-                <Thermometer reverseGradient='true' theme="dark" value={tempReading} max="35" steps="1" format="°C" size="small" height="100" />
-                <p>{data.sensors[index]}</p>
+                <Thermometer reverseGradient='true' theme="dark" value={_data.temperature} max="35" steps="1" format="°C" size="small" height="100" />
+                <p>{_data.name}</p>
             {/* </div> */}
             </MDBCol>
           ))

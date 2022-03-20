@@ -4,20 +4,6 @@ import SensorList from './SensorList';
 import { MDBTable,MDBTableBody, MDBRow,MDBCard,MDBCol, MDBCardTitle, MDBCardText } from 'mdbreact';
 import axios from 'axios';
 
-import { 
-  CTW_A_TEMP1,CTW_A_TEMP2,CTW_A_FLOWRATE,CTW_A_ELECTPWR, 
-  CTW_B_TEMP1,CTW_B_TEMP2,CTW_B_FLOWRATE,CTW_B_ELECTPWR,
-  WCPU_A_TEMP1, WCPU_A_TEMP2, WCPU_A_FLOWRATE, WCPU_A_ELECTPWR,
-  WCPU_B_TEMP1, WCPU_B_TEMP2, WCPU_B_FLOWRATE, WCPU_B_ELECTPWR,
-  AHU_A_TEMP1,AHU_A_TEMP2,AHU_A_FLOWRATE,AHU_A_ELECTPWR,
-  AHU_B_TEMP1,AHU_B_TEMP2,AHU_B_FLOWRATE,AHU_B_ELECTPWR, 
-  CHILLER_A_CH_TEMP1, CHILLER_A_CH_TEMP2, CHILLER_A_CH_FLOWRATE,
-  CHILLER_A_CW_TEMP1, CHILLER_A_CW_TEMP2, CHILLER_A_CW_FLOWRATE,
-  CHILLER_B_CH_TEMP1, CHILLER_B_CH_TEMP2, CHILLER_B_CH_FLOWRATE,
-  CHILLER_B_CW_TEMP1, CHILLER_B_CW_TEMP2, CHILLER_B_CW_FLOWRATE,
-  CHILLER_A_ELECTPWR, CHILLER_B_ELECTPWR
-} from '../types';
-
 // https://jpg-svg.com/#
 // https://imageresizer.com/transparent-background
 // https://picsvg.com/
@@ -36,7 +22,7 @@ function ELECTCompSysModule({ model, color, systemComponent, handleComponetSelec
     // --------------
     useEffect(()=>{
         // ---------
-        if (sensors === null) getSensors();
+        if (sensors === null) getSensors(30,null,null);
         // ------------------
         abstactELECTPWRMTR();
         RELOADRAWDARA();
@@ -46,24 +32,24 @@ function ELECTCompSysModule({ model, color, systemComponent, handleComponetSelec
     const abstactELECTPWRMTR = () => {
         if (sensors === null) 
         return;
-        // -----------------
-        // ABSTRACT WISENSOR
-        // -----------------
+        // -------------------------------
+        // ABSTRACT ELECTRICAL POWER METER
+        // -------------------------------
         let _PWRMeters = [];
-        let _sLabels = [];
-				let _plotDatas = [];
         let _airPressDatas = [['Label', 'Value']];
         // -----------------------
-        sensors.map( sensor => {
+        sensors.forEach( sensor => {
           // --------------------
           if (sensor.type==='PWRMTR(485)') {
             // ------------------------------
             let { datas } = getDatas(sensor);
             let _data = sensor.logsdata.length > 0 ? sensor.logsdata[0] : null;
             // ---------------------
+            let _dataObj = {
+              ...sensor,
+              name : getName(sensor)
+            }
             _PWRMeters.push(sensor);
-            _sLabels.push(sensor.name);
-						_plotDatas.push(datas);
             // --------------------
             let _HEXStr = _data ? _data.RCV_BYTES[0] + _data.RCV_BYTES[1] : '';
             let totaleEnergy = _data ? parseInt(_HEXStr,16)*0.01 : -999;
@@ -72,9 +58,22 @@ function ELECTCompSysModule({ model, color, systemComponent, handleComponetSelec
           }
         })
         // --------------------
-        setPWRMeter(_PWRMeters);
+        setPWRMeter(_PWRMeters.sort(compareByName));
         // -------------------------
     }
+    function compareByName(a, b) {
+      var nameA = a.name.toUpperCase(); // ignore upper and lowercase
+      var nameB = b.name.toUpperCase(); // ignore upper and lowercase
+      if (nameA < nameB) {
+        return -1;
+      }
+      if (nameA > nameB) {
+        return 1;
+      }
+      // names must be equal
+      return 0;
+    }
+   
     // ------------------
     function byteArray(dataArr) {
       let strTEXT ="";
@@ -196,7 +195,7 @@ function ELECTCompSysModule({ model, color, systemComponent, handleComponetSelec
 			<MDBRow center>
 
 				<MDBCard className="p-3 m-2"style={{ width: "40rem" }}>
-					<MDBCardTitle>ELECTR POWER METER</MDBCardTitle>
+					<MDBCardTitle>ELECTRICAL POWER METER</MDBCardTitle>
 					<MDBTable striped small>
 						<MDBTableBody>
 						{

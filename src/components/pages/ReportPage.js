@@ -34,7 +34,7 @@ const ReportPage = () => {
   // ---------
   useEffect(()=>{
     // ---------------
-    if (sensors === null) getSensors();
+    if (sensors === null) getSensors(30,null,null);
     // ---------------
     abstactWiSensor();
     // ---------------
@@ -158,11 +158,22 @@ const ReportPage = () => {
     }
   }
   const DownloadPdfJAN = () => {
-    console.log('..AXIOS APIS.... /FETCH-PDF-DEC');
+    console.log('..AXIOS APIS.... /FETCH-PDF-JAN');
     try {
       axios.get('/fetch-pdf-JAN2022', {responseType:'blob'}).then((res)=>{
         const pdfBlob = new Blob([res.data],{type:'application/pdf'});
         saveAs(pdfBlob,'JAN2022-Report.pdf');
+      })
+    } catch{
+
+    }
+  }
+  const DownloadPdfFEB = () => {
+    console.log('..AXIOS APIS.... /FETCH-PDF-FEB');
+    try {
+      axios.get('/fetch-pdf-FEB2022', {responseType:'blob'}).then((res)=>{
+        const pdfBlob = new Blob([res.data],{type:'application/pdf'});
+        saveAs(pdfBlob,'FEB2022-Report.pdf');
       })
     } catch{
 
@@ -174,6 +185,7 @@ const ReportPage = () => {
       <MDBBtn onClick={()=>DownloadPdfNOV()}>NOV 2021 REPORT</MDBBtn>
       <MDBBtn onClick={()=>DownloadPdfDEC()}>DEC 2021 REPORT</MDBBtn>
       <MDBBtn onClick={()=>DownloadPdfJAN()}>JAN 2022 REPORT</MDBBtn>
+      <MDBBtn onClick={()=>DownloadPdfFEB()}>FEB 2022 REPORT</MDBBtn>
       <div className="d-flex flex-row justify-content-center flex-wrap" >
       {
         wiSensors.length === 0 ? <Spinner /> : wiSensors.map((sensor,index) => {
@@ -194,8 +206,8 @@ const ReportPage = () => {
               {/* <HeatMapLegend/> */}
               <div className="d-flex flex-column justify-content-center" >
                 <div className="d-flex flex-row align-items-baseline justify-content-center flex-wrap">
-                  { sensorStatsData[keySensorStat] && <HeatMap title="MIN-TEMP" sensorData={sensorStatsData[keySensorStat]} index='0'/> }
-                  { sensorStatsData[keySensorStat] && <HeatMap title="MAX-TEMP" sensorData={sensorStatsData[keySensorStat]} index='1'/> }
+                  {/* { sensorStatsData[keySensorStat] && <HeatMap title="MIN-TEMP" sensorData={sensorStatsData[keySensorStat]} index='0'/> } */}
+                  {/* { sensorStatsData[keySensorStat] && <HeatMap title="MAX-TEMP" sensorData={sensorStatsData[keySensorStat]} index='1'/> } */}
                 </div>
                 <div>
                   <MDBBtn color="white" size="lg" onClick={()=>HandleDownload(`${sensor.sensorId}`)}>

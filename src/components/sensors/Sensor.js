@@ -1,8 +1,7 @@
-import React, { Fragment, useContext, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import SensorItem from './SensorItem';
 import Spinner from '../layout/Spinner';
-import { MDBContainer,MDBRow,MDBCardGroup, MDBPagination , 
-         MDBCard, MDBCardBody, MDBCardImage, MDBCardTitle, MDBCardText } from 'mdbreact';
+import { MDBRow,MDBCardGroup } from 'mdbreact';
 import SensorContext from '../../context/sensor/sensorContext';
 
 const Sensors = ({SelectSensor}) => {
@@ -13,30 +12,10 @@ const Sensors = ({SelectSensor}) => {
 	const { sensors, filtered, getSensors, loading, } = sensorContext;
 	// ---------------
 	useEffect( ()=> {
-			getSensors();
+			getSensors(30,null,null);
 			// eslint-disable-next-line
 	},[])
 	// ---------
-	const getLocationSensorsMap = () => {
-		// ---------------------------------
-		// CONSTRUCTION LOCATION SENSORS MAP
-		// ---------------------------------
-		if (sensors) {
-			const locationSensorsMap = sensors.reduce((map,sensor) => {
-			if (map[sensor.location] === undefined) {
-					map[sensor.location] = [];
-					map[sensor.location].push(sensor);
-			} else {
-					map[sensor.location].push(sensor);
-			};
-			return map;
-			},{})
-			return locationSensorsMap;
-		} else 
-		{
-				return null;
-		}
-	}
 	return (
 		<MDBRow className="masonry-with-columns">
 			<MDBCardGroup deck className="justify-content-center">

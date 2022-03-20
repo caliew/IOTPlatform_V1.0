@@ -38,10 +38,10 @@ function AIRCompSysModule({ model, color, systemComponent, handleComponetSelecti
 		// -------------------------------------------
     const sensorContext = useContext(SensorContext);
     const [showHide, setShowHide] = useState(true);
-    const { sensors, sensorsData, filtered, getSensors, loading, } = sensorContext;
+    const { sensors, getSensors } = sensorContext;
     // --------------
     useEffect(()=>{
-        if (sensors === null) getSensors();
+        if (sensors === null) getSensors(30,null,null);
         abstactAIRPRESSSensor();
     },[sensors])
     // ---------------------------
@@ -52,28 +52,30 @@ function AIRCompSysModule({ model, color, systemComponent, handleComponetSelecti
         // ABSTRACT WISENSOR
         // -----------------
         let _AFSensors = [];
-        let _sLabels = [];
-				let _plotDatas = [];
-        let _airPressDatas = [['Label', 'Value']];
+        let _airpressureDatas = [];
         // -----------------------
         sensors.sort().map( sensor => {
+          // --------------------------
+          // reading = logsdata.length > 0 ? Number(parseFloat(`0x${logsdata[0].RCV_BYTES[0]}${logsdata[0].RCV_BYTES[1]}`)/100).toFixed(2) + 'bar': 'bar';
           if (sensor.location === 'AIRCOMP' && sensor.type==='WTRPRS(485)') {
             // ------------------------------
-            let { datas } = getDatas(sensor);
-            _AFSensors.push(sensor);
-            _sLabels.push(sensor.name);
-						_plotDatas.push(datas);
-            let pressure = sensor.logsdata.LENGTH > 1 ? parseFloat(`0x${sensor.logsdata[0].RCV_BYTES[0]}${sensor.logsdata[0].RCV_BYTES[1]}`)/100 : 0;
+            let pressure = sensor.logsdata.length > 0 ? Number(parseFloat(`0x${sensor.logsdata[0].RCV_BYTES[0]}${sensor.logsdata[0].RCV_BYTES[1]}`)/100).toFixed(2) : 0;
             pressure = Number(Number(pressure).toFixed(2));
-            sensor.logsdata[0] && _airPressDatas.push(['BAR',pressure]);
+            // -------
+            _AFSensors.push(sensor);
+            let _objSensor = {
+              sensor : sensor,
+              name : sensor.name,
+              unit :'bar',
+              pressure : pressure
+            }
+            sensor.logsdata[0] && _airpressureDatas.push(_objSensor);
             // -------------------
           }
         })
         // --------------------
         setAFSensor(_AFSensors.sort(compareByName));
-        setSensorLabels(_sLabels);
-        setAPressData(_airPressDatas);
-				setPlotDatas(_plotDatas);
+        setAPressData(_airpressureDatas);
         // -------------------------
     }
     // --------------
@@ -106,9 +108,8 @@ function AIRCompSysModule({ model, color, systemComponent, handleComponetSelecti
 				</MDBCard>
 
 				<MDBCard className="p-4 m-2" style={{ width: "40rem" }}>
-          { showHide && sensorLabels && airPressData && getDialGauge( { 
-              title : 'PRESSURE', 
-              sensors : sensorLabels, 
+          { showHide && getDialGauge( { 
+              title : 'PRESSURE',
               data : airPressData, 
               redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}            
 				</MDBCard>
@@ -132,16 +133,16 @@ function compareByName(a, b) {
 // -------------
 // GET SVG MODEL
 // -------------
-const getDialGauge = ({title,sensors,data}) => {
-  let nROW = 0;
+const getDialGauge = ({data}) => {
   return (
     <MDBRow>
       {/* <div className="d-flex row p-4 justify-content-center"> */}
       {
-        sensors.sort().map( (sensor,index) => {
+        data.sort().map( (sensor,index) => {
           let _gauge = [];
-          _gauge.push(data[0])
-          _gauge.push(data[index+1]);
+          let _data = [sensor.unit,sensor.pressure];
+          _gauge.push(['Label', 'Value'])
+					_gauge.push(_data);
           return(
             <MDBCol md="3">
               {/* <div className="d-flex flex-column px-4 align-items-center " > */}
@@ -157,7 +158,7 @@ const getDialGauge = ({title,sensors,data}) => {
                                 min:0,
                                 minorTicks: 5,}}
                                 rootProps={{ 'data-testid': '1' }} />
-                  <h6>{sensor}</h6>
+                  <h6>{sensor.name}</h6>
               {/* </div> */}
             </MDBCol>
           )

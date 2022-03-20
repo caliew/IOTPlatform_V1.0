@@ -20,6 +20,8 @@ import {
 
 const initialState = {
   sensors: null,
+  wisensors:null,
+  sensorTypeMap:null,
   rawsensors: null,
   current: null,
   sensorsData: null,
@@ -39,29 +41,24 @@ const SensorState = props => {
   // ------------
   // GET SENSORS
   // ------------
-  const getSensors = async () => {
+  const getSensors = async (datasets,date0,date1) => {
     try {
       // --------------------------------
-      let _time = new Date();
-      const params = { totalLines : 100, id: user._id };
+      const params = { totalLines : datasets, id: user._id, date0, date1 };
       axios.get('/api/sensors', { params } ).then (res => {
         // ----------------
         dispatch({type: SET_SENSORS,payload: res.data});
         // ----------------
-      }).then( res => {
-        // --------------    
-        getSensorsData();
-        // --------------
-      }).catch ( err => {
-        dispatch({
-          type: SENSOR_ERROR
-        });
       })
+      .then( res => { getSensorsData(); })
+      .catch ( err => { dispatch({type: SENSOR_ERROR});} )
       // --------------
     } catch (err) {
     }
   }
-  // rawsensordata
+  // --------------------
+  // GET RAW SENSORS DATA
+  // --------------------
   const getRawSensors = async() => {
     try {
       console.log('[SENSORSTATE.JS]....GET API/SENSORS/RAWSENSORDATA....')
@@ -226,6 +223,8 @@ const SensorState = props => {
     <SensorContext.Provider
       value={{
         sensors : state.sensors,
+        wisensors : state.wisensors,
+        sensorTypeMap : state.sensorTypeMap,
         rawsensors : state.rawsensors,
         current: state.current,
         filtered : state.filtered,

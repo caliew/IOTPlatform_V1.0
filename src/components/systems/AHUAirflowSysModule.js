@@ -19,16 +19,14 @@ import TDKFloorPlan from './TDKFloorPlan';
 function AHUAirflowSysModule({ model, color, systemComponent, handleComponetSelection, title, type }) {
     // -----------
     const [airFlowSensors, setAFSensor] = useState([]);
-    const [sensorLabels, setSensorLabels] = useState([]);
     const [airFlowData, setAFlowData] = useState([]);
-		const [plotDatas, setPlotDatas] = useState([]);
 		// -------------------------------------------
     const sensorContext = useContext(SensorContext);
     const [showHide, setShowHide] = useState(true);
-    const { sensors, filtered, getSensors, loading, } = sensorContext;
+    const { sensors, getSensors } = sensorContext;
     // --------------
     useEffect(()=>{
-        if (sensors === null) getSensors();
+        if (sensors === null) getSensors(30,null,null);
         // ------------------
         abstactAIRFLOWSensor();
         //  ---------------
@@ -38,26 +36,27 @@ function AHUAirflowSysModule({ model, color, systemComponent, handleComponetSele
         if (sensors === null) 
         return;
         // -----------------
-        // ABSTRACT WISENSOR
+        // ABSTRACT AIRFLOW METER
         // -----------------
         let _AFSensors = [];
-        let _sLabels = [];
-				let _plotDatas = [];
-        let _airflowDatas = [['Label', 'Value']];
+        let _airflowDatas = [];
         sensors.map( sensor => {
+          // -----------
 					if (sensor.type === 'AIRFLW(485)' && sensor.location !== 'AIRCOMP') {
-						let { datas } = getDatas(sensor);
+            // --------
 						_AFSensors.push(sensor);
-						_sLabels.push(sensor.name);
-						_plotDatas.push(datas);
-						sensor.logsdata[0] && _airflowDatas.push(['m/s',Number(sensor.logsdata[0].DATAS[0])/10.0]);
+            let _objSensor = {
+              sensor : sensor,
+              name : sensor.name,
+              unit : 'm/s',
+              velocity : Number(sensor.logsdata[0].DATAS[0])/10.0
+            }
+						sensor.logsdata[0] && _airflowDatas.push(_objSensor);
 					}
         })
         // ------------------------
         setAFSensor(_AFSensors.sort(compareByName));
-        setSensorLabels(_sLabels);
-        setAFlowData(_airflowDatas);
-				setPlotDatas(_plotDatas);
+        setAFlowData(_airflowDatas.sort(compareByName));
         // ----------------------
     }
     // ------
@@ -76,9 +75,8 @@ function AHUAirflowSysModule({ model, color, systemComponent, handleComponetSele
 					</MDBCard>
 
           <MDBCard className="p-4 m-2" style={{ width: "40rem" }}>
-					{ showHide && sensorLabels && airFlowData && getDialGauge( { 
+					{ showHide && getDialGauge( { 
 									title : 'FLOW RATE', 
-									sensors : sensorLabels, 
 									data : airFlowData, 
 									redFrom: 90, redTo: 100, yellowFrom: 75, yellowTo: 90, minorTicks: 5})}
 					</MDBCard>
@@ -90,14 +88,15 @@ function AHUAirflowSysModule({ model, color, systemComponent, handleComponetSele
 // -------------
 // GET SVG MODEL
 // -------------
-const getDialGauge = ({title,sensors,data}) => {
+const getDialGauge = ({data}) => {
   return (
     <MDBRow >
 			{
-				sensors.map( (sensor,index) => {
+				data.map( (sensor,index) => {
 					let _gauge = [];
-					_gauge.push(data[0])
-					_gauge.push(data[index+1]);
+          let _data = [sensor.unit,sensor.velocity];
+					_gauge.push(['Label', 'Value'])
+					_gauge.push(_data);
 					return(
 						// <div className="d-flex flex-column px-4 align-items-center " >
             <MDBCol md="3">
@@ -113,7 +112,7 @@ const getDialGauge = ({title,sensors,data}) => {
 															min:0,
 															minorTicks: 5,}}
 															rootProps={{ 'data-testid': '1' }} />
-								<h6>{sensor}</h6>
+								<h6>{sensor.name}</h6>
             </MDBCol>
 						// </div>
 					)

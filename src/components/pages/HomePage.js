@@ -33,8 +33,6 @@ const HomePage = () => {
   const [dataHeatMap,setHeatMap] = useState([]);
 	const [mTimer,setTimer] = useState(null);
 	// --------------
-	let nCounter = 0;
-	// --------------
 	useEffect(()=> {
 		// -----------
 		user && user.companyname == "Nippon Glass" && history.push('/NipponGlass')
@@ -42,9 +40,8 @@ const HomePage = () => {
 		// -----------
 		if (isAuthenticated)  {
 			// ----------
-			getSensors();
+			getSensors(30,null,null);
 			getNotification();
-    	// getSensorsData();
 			getAllCompanies();
 			// ---------
 			// SET TIMER
@@ -58,11 +55,8 @@ const HomePage = () => {
   // --------------------------------------------
 	const handleTimer = () => {
 		// ----------
-		getSensors();
-		// ----------
-    // getSensorsData();
+		getSensors(30,null,null);
 		getNotification();
-		// getAlerts();
 	}
   const handleComponetSelection = (sysName) => {
 		// --------------------------
@@ -80,7 +74,7 @@ const HomePage = () => {
 						<MDBCard onClick={()=>setSelection('ENV_RH')} className={selection==='ENV_RH' && 'grey lighten-2'}>
 							<MDBIcon icon="temperature-high" size="3x" className="d-flex pt-4 justify-content-center" />
 							{/* <MDBCardImage src="https://mdbootstrap.com/img/Photos/Others/images/49.jpg" alt="MDBCard image cap" top hover overlay="white-strong" />								 */}
-							<MDBCardBody tag="h5">ENV. RH</MDBCardBody>
+							<MDBCardBody tag="h5">ENV. TEMP, RH & ABS</MDBCardBody>
 							<MDBCardFooter small muted></MDBCardFooter>
 						</MDBCard>
 
@@ -88,7 +82,7 @@ const HomePage = () => {
 								<MDBCard onClick={()=>setSelection('AHU_AFLW')} className={selection==='AHU_AFLW' && 'grey lighten-2'}>
 									<MDBIcon fas icon="wind" size='4x' className="d-flex pt-4 justify-content-center"/>
 									{/* <MDBCardImage src="https://mdbootstrap.com/img/Photos/Others/images/49.jpg" alt="MDBCard image cap" top hover overlay="white-strong" />								 */}
-									<MDBCardBody tag="h5">AHU DUCT AIRFLOW</MDBCardBody>
+									<MDBCardBody tag="h5">HVAC DUCT AIRFLOW</MDBCardBody>
 									<MDBCardFooter small muted></MDBCardFooter>
 								</MDBCard>
 						)}
@@ -101,7 +95,7 @@ const HomePage = () => {
 								</MDBCard>
 						)}
 						{ user && (user.companyname != "AWC" && user.companyname != "IKN" && user.companyname != "Nippon Glass") && (
-							<MDBCard onClick={()=>setSelection('SYS_AIR_COMPR')} className={selection==='SYS_COMPR' && 'grey lighten-2'}>
+							<MDBCard onClick={()=>setSelection('SYS_AIR_COMPR')} className={selection==='SYS_AIR_COMPR' && 'grey lighten-2'}>
 								{/* <MDBIcon fas icon="wind" size='2x' className="d-flex pt-4 justify-content-center"/> */}
 								<MDBIcon fas icon="tachometer-alt" size="4x" className="d-flex pt-4 justify-content-center" />
 								{/* <MDBCardImage src="https://mdbootstrap.com/img/Photos/Others/images/49.jpg" alt="MDBCard image cap" top hover overlay="white-strong" />								 */}
@@ -111,18 +105,25 @@ const HomePage = () => {
 						)}
 
 						{ user && (user.companyname != "AWC" && user.companyname != "IKN" ) && (
-							<MDBCard onClick={()=>setSelection('SYS_PIPE_TEMP')} className={selection==='PIPE_TEMP' && 'grey lighten-2'}>
+							<MDBCard onClick={()=>setSelection('SYS_PIPE_TEMP')} className={selection==='SYS_PIPE_TEMP' && 'grey lighten-2'}>
 								<MDBIcon icon="water" size="4x" className="d-flex pt-4 justify-content-center" />
 									<MDBCardBody tag="h5">WATER PIPE TEMP</MDBCardBody>
 									<MDBCardFooter small muted></MDBCardFooter>
 							</MDBCard>
 						)}
 
-
 						{ user && (user.companyname != "AWC" && user.companyname != "IKN" ) && (
 							<MDBCard onClick={()=>setSelection('SYS_ELECT')} className={selection==='SYS_ELECT' && 'grey lighten-2'}>
 								<MDBIcon far icon="lightbulb" size="4x" className="d-flex pt-4 justify-content-center" />
 									<MDBCardBody tag="h5">ELECT SYSTEM</MDBCardBody>
+									<MDBCardFooter small muted></MDBCardFooter>
+							</MDBCard>
+						)}
+
+						{ user && (user.companyname != "AWC" && user.companyname != "IKN" ) && (
+							<MDBCard onClick={()=>setSelection('SYS_HVAC')} className={selection==='SYS_HVAC' && 'grey lighten-2'}>
+								<MDBIcon far icon="snowflake" size="4x" className="d-flex pt-4 justify-content-center" />
+									<MDBCardBody tag="h5">HVAC SYSTEM</MDBCardBody>
 									<MDBCardFooter small muted></MDBCardFooter>
 							</MDBCard>
 						)}

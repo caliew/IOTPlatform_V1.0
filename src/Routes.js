@@ -7,6 +7,7 @@ import MaintScehduler from './components/pages/MaintScehduler';
 import HomePage from './components/pages/HomePage';
 import RegisterPage from './components/pages/RegisterPage';
 import ReportPage from './components/pages/ReportPage';
+import ChartsPage from './components/pages/ChartsPage';
 import NipponGlassPage from './components/pages/NipponGlassPage'
 import TestPage from './components/pages/TestPage';
 import AboutPage from './components/pages/AboutPage';
@@ -23,6 +24,7 @@ class Routes extends React.Component {
         <Route exact path='/cmms' component={MaintScehduler} />
         <Route exact path='/admin' component={AdminPage} />
         <Route exact path='/register' component={RegisterPage} />
+        <Route exact path='/charting' component={ChartsPage} />
         <Route exact path='/report' component={ReportPage} />
         <Route exact path='/test' component={TestPage} />
         <Route exact path='/about' component={AboutPage} />

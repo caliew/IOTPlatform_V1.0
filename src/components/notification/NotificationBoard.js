@@ -8,14 +8,12 @@ const Notification = () => {
 	// ---------------------------
   const notificationContext = useContext(NotificationContext);	
   const { notifications } = notificationContext;
-  const authContext = useContext(AuthContext);
-  const { getAllUsers, user, users, companies, updateUser, updateCompany, clearErrors, isAuthenticated } = authContext;
 	const [userNotifications,setNotifications] = useState(null)
-	const [userNotificationsMap,setNotificationsMap] = useState(null)
-	const [userSensors,setUserSensors] = useState([]);
+	// const [userNotificationsMap,setNotificationsMap] = useState(null)
+	// const [userSensors,setUserSensors] = useState([]);
 	// ---------------------------------------------
 	const sensorContext = useContext(SensorContext);
-  const { sensors, sensorsData, getSensors, getSensorsData } = sensorContext;
+  const { sensors } = sensorContext;
 	// --------------
 	useEffect(() => {
 		// ----------
@@ -25,12 +23,14 @@ const Notification = () => {
 				let key = `${sensor.dtuId}:${sensor.sensorId}`;
 				sensorsArr.push(key)
 			})
-			setUserSensors(sensorsArr);
+			// setUserSensors(sensorsArr);
 		}
 		// -----------------
 		let userNotificationArr = [];
+		// -----------------
 		if (notifications) {
-			notifications.map( notice => {
+			// ---------------
+			notifications.sort().forEach( notice => {
 				let key = `${notice.dtuId}:${notice.sensorId}`;
 				if(sensorsArr.includes(key)) {
 					let _date = new Date(notice.date);
@@ -55,10 +55,18 @@ const Notification = () => {
 				alert['Flag'] = value.length;
 				userNotificationArr.push(alert);
 			});
-			setNotifications(userNotificationArr);
-			setNotificationsMap(noticeMap);
+			// --------------------
+			setNotifications(userNotificationArr.sort(compareByDate));
+			// setNotificationsMap(noticeMap);
 		}
-	},[notifications,sensors])
+	},[notifications,sensors]);
+	// -------------------------
+	function compareByDate(a, b) {
+		var dateA = new Date(a.date);
+		var dateB = new Date(b.date);
+		if (dateA > dateB) return 1;
+		if (dateA < dateB) return -1;
+	}	
 	// ---------------------------
 	const getTimeDateLabel = (date) => {
 		let _date = new Date(date);

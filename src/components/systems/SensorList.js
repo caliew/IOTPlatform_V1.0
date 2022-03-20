@@ -4,6 +4,7 @@ import { MDBIcon } from 'mdbreact';
 import {
   Sparkline,
   LineSeries,
+	BarSeries,
   HorizontalReferenceLine,
   BandLine,
   PatternLines,
@@ -37,62 +38,22 @@ function parseFloat(str) {
   }
   return float*sign;
 }
-function getDatas(sensor) {
-  // console.log(sensor.logsdata);
-  let datas = [];
-  let VelData = [];
-  let PressData = [];
-  let rmsVel = 0;
-  let maxVel = -999;
-  let minVel = 999;
-  let maxVelDateTime;
-  let minVelDateTime;
-  // -----------------
-  sensor.logsdata.map( (data,index) => {
-    let _Date = new Date(data.TIMESTAMP);
-    let _timeLabel = _Date.toLocaleDateString([], {hour12: false,hour: "2-digit",minute: "2-digit"});
-    // -------------------------------------------------
-		let velocity = Number(data.DATAS[0])/10.0;
-    let pressure = Number(parseFloat(`0x${data.RCV_BYTES[0]}${data.RCV_BYTES[1]}`).toFixed(2)/100.0);
-		// -------------------
-    if (velocity > maxVel) {
-      maxVel = velocity;
-      maxVelDateTime = _timeLabel;
-    }
-    // -------------------------
-    if (velocity < minVel) {
-      minVel = velocity;
-      minVelDateTime = _timeLabel;
-    }
-    // ----------------------------------------------
-    VelData.push({y:velocity,x:_timeLabel}); 
-    PressData.push({y:pressure,x:_timeLabel}); 
-  })
-  // -------------
-	switch (sensor.type) {
-		case 'WTRPRS(485)':
-			datas.push(PressData)
-			break;
-		case 'WTRPRS(485)':
-			datas.push(PressData)
-			break;
-		default :
-		datas = null;
-			break;
-	}
-  // ----------------
-	console.log(datas)
-  return datas;
-}
-const Randomdata = () => { return Array(25).fill().map(Math.random) };
+function diff_hours(dt2, dt1) 
+ {
+
+  var diff =(dt2.getTime() - dt1.getTime()) / 1000;
+  diff /= (60 * 60);
+  return diff.toFixed(2);
+ }
 const sensorData = (sensor) => {
 	// ---------------
 	let dataArray = [];
-	let data = Array(25).fill().map(Math.random);
+	// let data = Array(25).fill().map(Math.random);
 	// -------------------------------------------
+	let _reading0,_reading;
+	let _DATEIME;
 	sensor.logsdata && sensor.logsdata.map( (_data,index) => {
 		// -------------------------
-		let _reading;
 		switch (sensor.type) {
 			case "WTRPRS(485)":
 				_reading = Number(parseFloat(`0x${_data.RCV_BYTES[0]}${_data.RCV_BYTES[1]}`).toFixed(2)/100.0);
@@ -109,7 +70,16 @@ const sensorData = (sensor) => {
 			case "PWRMTR(485)":
 				let _HEXStr = _data.RCV_BYTES[0] + _data.RCV_BYTES[1];
 				let _HEXInt = parseInt(_HEXStr,16) * 0.01;
-				_reading = Number(_HEXInt);
+				let _reading1 = Number(_HEXInt);
+				let _dateTime = new Date(_data.TIMESTAMP);
+				if (index === 0) {
+					_reading = null;					
+				} else {
+					_reading = _reading0 - _reading1;
+					_reading = _reading /(diff_hours(_DATEIME,_dateTime));
+				}
+				_reading0 = _reading1;
+				_DATEIME = _dateTime;
 				break;
 			case "WISENSOR":
 				_reading = Number(_data.Temperature);
@@ -118,7 +88,7 @@ const sensorData = (sensor) => {
 				break;
 		}
 		// ----------------------
-		dataArray.push(_reading);
+		_reading !== null && dataArray.push(_reading);
 		// ----------------------
 	})
 	// -------------
@@ -167,7 +137,7 @@ const SensorList = ({companyName,sensor,index}) => {
 				limits = `${sensor.limits.TEMPERATURE_MIN}°C/${sensor.limits.TEMPERATURE_MAX}°C`			
 				break;
 			case 'PWRMTR(485)':
-				let _HEXStr = logsdata.LENGTH > 1 ? logsdata[0].RCV_BYTES[0] + logsdata[0].RCV_BYTES[1] : '';
+				let _HEXStr = logsdata.length > 1 ? logsdata[0].RCV_BYTES[0] + logsdata[0].RCV_BYTES[1] : '';
 				let _HEXInt = parseInt(_HEXStr,16)*0.01;
 				reading = logsdata.length > 0 ? `${Number(_HEXInt.toFixed(0))} kHh` : '- kWh';
 				limits = '';
@@ -175,7 +145,12 @@ const SensorList = ({companyName,sensor,index}) => {
 			case 'WISENSOR':
 				reading = logsdata.length > 0 ? `${logsdata[0].Temperature.toFixed(1)}°C`: '°C';
 				//  ${logsdata[0].Humidity.toFixed(1)}%
-				reading = logsdata[0].Humidity > 0 ? reading = `${reading} ${logsdata[0].Humidity.toFixed(1)}%` : reading;
+				// ABSOLUTE HUMIDITY = 6.112 x ( e^((17.67xT)/(T+243.50)) ) x R H x2.1674 / (273.15+T)
+				let _Temp = Number(logsdata[0].Temperature);
+				let _RH = Number(logsdata[0].Humidity);
+				// --------
+				let absRH = 6.12 * Math.exp( (17.67*_Temp)/(_Temp+243.50)) * _RH * 2.1674 / ( 273.15 + _Temp );
+				reading = logsdata[0].Humidity > 0 ? reading = `${reading} RH:${logsdata[0].Humidity.toFixed(1)}%  ABS:${absRH.toFixed(1)}%` : reading;
 				limits = sensor.limits ? `${sensor.limits.TEMPERATURE_MIN}°C/${sensor.limits.TEMPERATURE_MAX}°C` : `NA/NA`			
 				break;
 			default:
@@ -202,7 +177,7 @@ const SensorList = ({companyName,sensor,index}) => {
 	const getSparkLine = (sensor) => {
 		return (
 			<Sparkline ariaLabel="SENSOR SPARKLINE PLOT" margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
-			width={200} height={100} data={sensorData(sensor)} valueAccessor={datum => datum} >
+								 width={200} height={100} data={sensorData(sensor)} valueAccessor={datum => datum} >
 	
 				{/* this creates a <defs> referenced for fill */}
 				<PatternLines id="unique_pattern_id" height={6} width={6} stroke={allColors.green[6]} strokeWidth={1} orientation={['diagonal']} />
@@ -211,7 +186,9 @@ const SensorList = ({companyName,sensor,index}) => {
 				{/* display the median */}
 				<HorizontalReferenceLine stroke={allColors.grape[8]} strokeWidth={1} strokeDasharray="4 4" reference="median" />
 				{/* Series children are passed the data from the parent Sparkline */}
-				<LineSeries showArea={false} stroke={allColors.blue[7]} strokeWidth={1}/>
+				{
+					sensor.type === 'PWRMTR(485)' ? <BarSeries  showArea={false} stroke={allColors.blue[7]} strokeWidth={1}/> : <LineSeries  showArea={false} stroke={allColors.blue[7]} strokeWidth={1}/>
+				}
 				<PointSeries fill={allColors.grape[3]} size={4} stroke="#fff" renderLabel={renderLabel} />
 	
 			</Sparkline>
