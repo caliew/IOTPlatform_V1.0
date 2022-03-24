@@ -5,6 +5,8 @@ import SensorContext from './sensorContext';
 import SensorReducer from './sensorReducer';
 import {
   SET_SENSORS,
+  SET_PLOTSENSORDATA,
+  CLEAR_PLOTSENSORDATA,
   SET_RAWSENSORS,
   ADD_SENSOR,
   SENSOR_ERROR,
@@ -22,6 +24,7 @@ const initialState = {
   sensors: null,
   wisensors:null,
   sensorTypeMap:null,
+  plotSensorMap:null,
   rawsensors: null,
   current: null,
   sensorsData: null,
@@ -48,6 +51,23 @@ const SensorState = props => {
       axios.get('/api/sensors', { params } ).then (res => {
         // ----------------
         dispatch({type: SET_SENSORS,payload: res.data});
+        // ----------------
+      })
+      .then( res => { getSensorsData(); })
+      .catch ( err => { dispatch({type: SENSOR_ERROR});} )
+      // --------------
+    } catch (err) {
+    }
+  }
+  const getSensorPlotData = async (datasets,date0,date1) => {
+    try {
+      // --------------------------------
+      dispatch({type:CLEAR_PLOTSENSORDATA})
+      const params = { totalLines : datasets, id: user._id, date0, date1 };
+      // --------------------
+      axios.get('/api/sensors', { params } ).then (res => {
+        // ----------------
+        dispatch({type: SET_PLOTSENSORDATA,payload: res.data});
         // ----------------
       })
       .then( res => { getSensorsData(); })
@@ -225,6 +245,7 @@ const SensorState = props => {
         sensors : state.sensors,
         wisensors : state.wisensors,
         sensorTypeMap : state.sensorTypeMap,
+        plotSensorMap : state.plotSensorMap,
         rawsensors : state.rawsensors,
         current: state.current,
         filtered : state.filtered,
@@ -238,6 +259,7 @@ const SensorState = props => {
         updateSensor,
         deleteSensor,
         getSensors,
+        getSensorPlotData,
         getRawSensors,
         filterSensors,
         clearFilter,

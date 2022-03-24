@@ -64,8 +64,8 @@ function ENVSysModule({ systemComponent, handleComponetSelection, type, userComp
           // -----------------
           let _sensorObj = {
             name : sensor.name,
-            temperature : Number(sensor.logsdata[0].Temperature.toFixed(1)),
-            humidity : Number(sensor.logsdata[0].Humidity)
+            temperature : sensor.logsdata[0].Temperature ? Number(sensor.logsdata[0].Temperature.toFixed(1)) : null,
+            humidity : sensor.logsdata[0].Humidity ? Number(sensor.logsdata[0].Humidity) : null
           }
           sensor.logsdata[0] && _tempDatas.push(_sensorObj);
         };

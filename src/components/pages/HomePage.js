@@ -150,7 +150,7 @@ const HomePage = () => {
 					{ selection === 'SYS_AIR_COMPR' && <AIRCompSysModule /> }
 					{ selection === 'SYS_PIPE_TEMP' && <PIPEWTRTempSysModule /> }
 					{ selection === 'SYS_ELECT' && <ELECTCompSysModule /> }
-					{ selection === 'SYS_HVAC' && 
+					{ selection === 'SYS_HVAC1' && 
 							<TDK_HVAC_PlanView model='4' color='black' 
 								sensorsData={sensorsData} 
 								handleComponetSelection={handleComponetSelection} 

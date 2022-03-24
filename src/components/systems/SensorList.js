@@ -99,8 +99,10 @@ const renderLabel = d => d.toFixed(1);
 // ------------
 const SensorList = ({companyName,sensor,index}) => {
 	// -------------------
+	const getDTUID = (dtuId) => `DTU ID:${dtuId}`;
+	// ------------------
 	const getTableRow = (index,sensor) => {
-		const { name,logsdata,sensorId } = sensor
+		const { name,logsdata,sensorId,dtuId } = sensor
 		let reading,limits;
 		const _date = sensor.logsdata.length > 0 ? new Date(logsdata[0].TIMESTAMP) : null;
 		let mm = _date && _date.getMonth()+1;
@@ -143,14 +145,14 @@ const SensorList = ({companyName,sensor,index}) => {
 				limits = '';
 				break;
 			case 'WISENSOR':
-				reading = logsdata.length > 0 ? `${logsdata[0].Temperature.toFixed(1)}°C`: '°C';
+				reading = (logsdata.length > 0 && logsdata[0].Temperature) ? `${logsdata[0].Temperature.toFixed(1)}°C`: '°C';
 				//  ${logsdata[0].Humidity.toFixed(1)}%
 				// ABSOLUTE HUMIDITY = 6.112 x ( e^((17.67xT)/(T+243.50)) ) x R H x2.1674 / (273.15+T)
 				let _Temp = Number(logsdata[0].Temperature);
 				let _RH = Number(logsdata[0].Humidity);
 				// --------
 				let absRH = 6.12 * Math.exp( (17.67*_Temp)/(_Temp+243.50)) * _RH * 2.1674 / ( 273.15 + _Temp );
-				reading = logsdata[0].Humidity > 0 ? reading = `${reading} RH:${logsdata[0].Humidity.toFixed(1)}%  ABS:${absRH.toFixed(1)}%` : reading;
+				reading = ( logsdata[0].Humidity && logsdata[0].Humidity > 0) ? reading = `${reading} RH:${logsdata[0].Humidity}%  ABS:${absRH.toFixed(1)}%` : reading;
 				limits = sensor.limits ? `${sensor.limits.TEMPERATURE_MIN}°C/${sensor.limits.TEMPERATURE_MAX}°C` : `NA/NA`			
 				break;
 			default:
@@ -160,7 +162,9 @@ const SensorList = ({companyName,sensor,index}) => {
 		// -----
 		return (
 			<tr>
-				<td>{index}</td><td>{name}<br/>SENSOR ID:{sensorId}</td>
+				<td>{index}</td><td>{name}<br/>SENSOR ID:{sensorId}<br/>
+				{ dtuId > 0 && getDTUID(dtuId) }
+				</td>
 				<td>{`${dd}/${mm}`}<br/>{`${hours}:${minutes}`}</td>
 				<td>
 					{reading}<br/>

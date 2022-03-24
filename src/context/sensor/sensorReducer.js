@@ -1,5 +1,7 @@
 import {
   SET_SENSORS,
+  SET_PLOTSENSORDATA,
+  CLEAR_PLOTSENSORDATA,
   SET_RAWSENSORS,
   SENSOR_ERROR,
   ADD_SENSOR,
@@ -258,7 +260,7 @@ export default (state, action) => {
   // ----------------
   switch (action.type) {
     case SET_SENSORS:
-      let _map = action.payload.reduce((map,sensor) => { 
+      let _mapSensorType = action.payload.reduce((map,sensor) => { 
         if (map[sensor.type] === undefined) {
           map[sensor.type] = [];
           map[sensor.type].push(sensor);
@@ -271,7 +273,7 @@ export default (state, action) => {
         ...state,
         sensors: action.payload,
         wisensors:action.payload.filter(el => el.type === 'WISENSOR'),
-        sensorTypeMap : _map,
+        sensorTypeMap : _mapSensorType,
         locationSensorsMap : action.payload.reduce((map,sensor) => { 
             if (map[sensor.location] === undefined) {
             map[sensor.location] = [];
@@ -279,6 +281,27 @@ export default (state, action) => {
           } else {
             map[sensor.location].push(sensor); };
           return map; },{}),
+        loading: false
+      };
+    case CLEAR_PLOTSENSORDATA:
+      return {
+        ...state,
+        plotSensorMap : null,
+        loading:true
+      }
+    case SET_PLOTSENSORDATA:
+      let _plotsensormap = action.payload.reduce((map,sensor) => { 
+        if (map[sensor.type] === undefined) {
+          map[sensor.type] = [];
+          map[sensor.type].push(sensor);
+        } else {
+          map[sensor.type].push(sensor); 
+        };
+        return map; },{}
+        );
+      return {
+        ...state,
+        plotSensorMap : _plotsensormap,
         loading: false
       };
     case SET_RAWSENSORS:

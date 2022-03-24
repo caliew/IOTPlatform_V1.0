@@ -795,75 +795,81 @@ function TDK_IsoVIEW({ color, sensorsData, wisensors }) {
 							<text x="190" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && sensorsData[PWRMTR_19].reading} kWh</text>
 						</g>
 						<g transform="translate(0.0,100.0)">
-							<rect x="0" y="0" width="180" height="20" fill='black' />
-							<text x="15" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_20].name}</text>
-							<rect x="180" y="0" width="120" height="20" fill='blue	' />
-							<text x="190" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && sensorsData[PWRMTR_20].reading} kWh</text>
+							{/* <rect x="0" y="0" width="180" height="20" fill='black' /> */}
+							{/* <text x="15" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_20].name}</text> */}
+							{/* <rect x="180" y="0" width="120" height="20" fill='blue	' /> */}
+							{/* <text x="190" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && sensorsData[PWRMTR_20].reading} kWh</text> */}
 						</g>
 					</g>
 
-					<g transform="translate(1200.0,0.0)">
+					<g transform="translate(1205.0,0.0)">
 						<g transform="translate(0.0,0.0)">
 							<rect x="0" y="0" width="100" height="20" fill='black' />
 							<text x="15" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_21].name}</text>
-							<rect x="100" y="0" width="200" height="20" fill='blue	' />
-							<text x="120" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && (sensorsData[PWRMTR_21].reading + sensorsData[PWRMTR_22].reading)/2.0} kWh</text>
+							<rect x="100" y="0" width="200" height="20" fill='blue' />
+							<text x="120" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && (Number(sensorsData[PWRMTR_21].reading) + Number(sensorsData[PWRMTR_22].reading)).toFixed(0) } kWh</text>
 						</g>
 						<g transform="translate(0.0,25.0)">
-							{/* <rect x="0" y="0" width="180" height="20" fill='blue' /> */}
-							{/* <text x="15" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_21].reading} kWh</text> */}
-							{/* <rect x="180" y="0" width="120" height="20" fill='blue	' /> */}
-							{/* <text x="190" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && sensorsData[PWRMTR_22].reading} kWh</text> */}
+							<rect x="0" y="0" width="150" height="20" fill='green' />
+							<text x="20" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_21].reading} kWh</text>
+							<rect x="150" y="0" width="150" height="20" fill='green' />
+							<text x="170" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && sensorsData[PWRMTR_22].reading} kWh</text>
 						</g>
 						<g transform="translate(0.0,50.0)">
 							<rect x="0" y="0" width="100" height="20" fill='black' />
 							<text x="15" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_23].name}</text>
-							<rect x="100" y="0" width="200" height="20" fill='blue	' />
-							<text x="120" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && (sensorsData[PWRMTR_23].reading + sensorsData[PWRMTR_24].reading)/2.0} kWh</text>
+							<rect x="100" y="0" width="200" height="20" fill='blue' />
+							<text x="120" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && (Number(sensorsData[PWRMTR_23].reading) + Number(sensorsData[PWRMTR_24].reading)).toFixed(0)} kWh</text>
 						</g>
 						<g transform="translate(0.0,75.0)">
-							{/* <rect x="0" y="0" width="180" height="20" fill='blue' /> */}
-							{/* <text x="15" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_24].name}</text> */}
-							{/* <rect x="180" y="0" width="120" height="20" fill='blue	' /> */}
-							{/* <text x="190" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && sensorsData[PWRMTR_24].reading} kWh</text> */}
+							<rect x="0" y="0" width="150" height="20" fill='green' />
+							<text x="20" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_23].reading} kWh</text>
+							<rect x="150" y="0" width="150" height="20" fill='green	' />
+							<text x="170" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && sensorsData[PWRMTR_24].reading} kWh</text>
 						</g>
 						<g transform="translate(0.0,100.0)">
-							{/* <rect x="0" y="0" width="180" height="20" fill='blue' /> */}
-							{/* <text x="15" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_25].name}</text> */}
-							{/* <rect x="180" y="0" width="120" height="20" fill='blue	' /> */}
-							{/* <text x="190" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && sensorsData[PWRMTR_25].reading} kWh</text> */}
+							<rect x="0" y="0" width="100" height="20" fill='black' />
+							<text x="15" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_20].name}</text>
+							<rect x="100" y="0" width="200" height="20" fill='blue	' />
+							<text x="120" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && sensorsData[PWRMTR_20].reading} kWh</text>
 						</g>
 					</g>
-					<g transform="translate(1500.0,0.0)">
+					<g transform="translate(1510.0,0.0)">
 						<g transform="translate(0.0,0.0)">
 							<rect x="0" y="0" width="100" height="20" fill='black' />
 							<text x="15" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_26].name}</text>
 							<rect x="100" y="0" width="200" height="20" fill='blue	' />
-							<text x="120" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && (sensorsData[PWRMTR_26].reading + sensorsData[PWRMTR_25].reading/2.0)} kWh</text>
+							<text x="120" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && (Number(sensorsData[PWRMTR_26].reading) + Number(sensorsData[PWRMTR_25].reading)).toFixed(0)} kWh</text>
 						</g>
 						<g transform="translate(0.0,25.0)">
+							<rect x="0" y="0" width="150" height="20" fill='green' />
+							<text x="20" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_25].reading} kWh</text>
+							<rect x="150" y="0" width="150" height="20" fill='green	' />
+							<text x="170" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && sensorsData[PWRMTR_26].reading} kWh</text>
+						</g>
+						<g transform="translate(0.0,50.0)">
 							<rect x="0" y="0" width="100" height="20" fill='black' />
 							<text x="15" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_27].name}</text>
 							<rect x="100" y="0" width="200" height="20" fill='blue	' />
-							<text x="120" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && (sensorsData[PWRMTR_27].reading + sensorsData[PWRMTR_28].reading)/2.0} kWh</text>
-						</g>
-						<g transform="translate(0.0,50.0)">
-							{/* <rect x="0" y="0" width="180" height="20" fill='blue' /> */}
-							{/* <text x="15" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_28].name}</text> */}
-							{/* <rect x="180" y="0" width="120" height="20" fill='blue	' /> */}
-							{/* <text x="190" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && sensorsData[PWRMTR_28].reading} kWh</text> */}
+							<text x="120" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && (Number(sensorsData[PWRMTR_27].reading) + Number(sensorsData[PWRMTR_28].reading)).toFixed(0)} kWh</text>
 						</g>
 						<g transform="translate(0.0,75.0)">
+							<rect x="0" y="0" width="150" height="20" fill='green' />
+							<text x="20" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_27].reading} kWh</text>
+							<rect x="150" y="0" width="150" height="20" fill='green	' />
+							<text x="170" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && sensorsData[PWRMTR_28].reading} kWh</text>
+						</g>
+						<g transform="translate(0.0,100.0)">
 							<rect x="0" y="0" width="100" height="20" fill='black' />
 							<text x="15" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_29].name}</text>
 							<rect x="100" y="0" width="200" height="20" fill='blue	' />
-							<text x="120" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && (sensorsData[PWRMTR_29].reading + sensorsData[PWRMTR_30].reading)/2.0} kWh</text>
+							<text x="120" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && (Number(sensorsData[PWRMTR_29].reading) + Number(sensorsData[PWRMTR_30].reading)).toFixed(0)} kWh</text>
 						</g>
-						<g transform="translate(0.0,100.0)">
-							{/* <rect x="0" y="0" width="180" height="20" fill='blue' /> */}
-							{/* <text x="15" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_30].name}</text> */}
-							{/* <rect x="180" y="0" width="120" height="20" fill='blue	' /> */}
-							{/* <text x="190" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && sensorsData[PWRMTR_30].reading} kWh</text> */}
+						<g transform="translate(0.0,125.0)">
+							<rect x="0" y="0" width="150" height="20" fill='green' />
+							<text x="20" y="15" fill="white" font-size="1.0em" name='AHU' id='AHU' >{sensorsData && sensorsData[PWRMTR_29].reading} kWh</text>
+							<rect x="150" y="0" width="150" height="20" fill='green	' />
+							<text x="170" y="15" fill="white" font-size="1.0em" name='CHILLER_A_CHS_PRESS1' id='CHILLER_A_CHS_PRESS1'>{sensorsData && sensorsData[PWRMTR_30].reading} kWh</text>
 						</g>
 					</g>
 				</g>

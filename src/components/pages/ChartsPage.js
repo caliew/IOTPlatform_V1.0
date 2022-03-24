@@ -22,9 +22,10 @@ const ChartsPage = () => {
   const [value, onChange] = useState([new Date(), new Date()]);
 		// -------------------------------------
   const sensorContext = useContext(SensorContext);
-  const { sensorTypeMap, getSensors } = sensorContext;
+  const { plotSensorMap, getSensorPlotData } = sensorContext;
   // --------------
 	const getOptionRHA = ({title}) => {
+
 		return ({
 			title: { text: `${title}` },
 			tooltip: { trigger: "axis" },
@@ -201,7 +202,7 @@ const ChartsPage = () => {
 					filterMode: 'none'
 				}
 			],
-			series: getSeries2(0)
+			series: getSeriesVELOCITY(0)
 		})
 	};
 	// --------
@@ -213,8 +214,7 @@ const ChartsPage = () => {
 				width: "83%",
 				height: "17%",
 				bottom: "91%",
-				top: "10%",
-				data: getLegends2Data()
+				top: "10%"
 			},
 			grid: {
 				left: "3%",
@@ -262,7 +262,66 @@ const ChartsPage = () => {
 					filterMode: 'none'
 				}
 			],
-			series: getSeries2(0)
+			series: getSeriesPRESSURE(0)
+		})
+	};
+	const getOptionPWRMTR = ({title}) => {
+		return ({
+			title: { text: `${title}` },
+			tooltip: { trigger: "axis" },
+			legend: { 
+				width: "83%",
+				height: "17%",
+				bottom: "91%",
+				top: "10%"
+			},
+			grid: {
+				left: "3%",
+				right: "4%",
+				bottom: "3%",
+				containLabel: true
+			},
+			toolbox: {
+				show: true,
+				feature: {
+					dataZoom: { yAxisIndex: 'none' },
+					dataView: { readOnly: false },
+					magicType: { type: ['line', 'bar'] },
+					restore: {},
+					saveAsImage: {},
+				}
+			},
+			xAxis: {
+				type: "time",
+				boundaryGap: false
+			},
+			yAxis: {
+				type: "value",
+				boundaryGap: [0, '100%']
+			},
+			dataZoom: [
+				{
+					type: 'slider',
+					xAxisIndex: 0,
+					filterMode: 'none'
+				},
+				{
+					type: 'slider',
+					yAxisIndex: 0,
+					filterMode: 'none'
+				},
+				{
+					type: 'inside',
+					xAxisIndex: 0,
+					filterMode: 'none'
+				},
+				{
+					type: 'inside',
+					yAxisIndex: 0,
+					filterMode: 'none'
+				}
+			],
+			series: getSeriesPWRMTR(0)
 		})
 	};
 	// --------
@@ -298,6 +357,7 @@ const ChartsPage = () => {
 		})
 		return _datas;
 	}
+	// ----------------
 	const getSeriesRH = (index) => {
 		// ----------------------
 		let _seriesdata = [];
@@ -318,7 +378,7 @@ const ChartsPage = () => {
 		// ---------------------
 		return _seriesdata;
 	}
-	const getSeries2 = (index) => {
+	const getSeriesVELOCITY = (index) => {
 		// ----------------------
 		let _seriesdata = [];
 		plotVELSensors && plotVELSensors.forEach( _sensor => {
@@ -338,14 +398,66 @@ const ChartsPage = () => {
 		// ---------------------
 		return _seriesdata;
 	}
+	const getSeriesPRESSURE = (index) => {
+		// ----------------------
+		let _seriesdata = [];
+		plotPRESSSensors && plotPRESSSensors.forEach( _sensor => {
+			// ---------------------------------
+			let _rslt = getSensorData(_sensor,index);
+			// ---------------
+			let _object = {
+				name : _sensor.name,
+				type : 'line',
+				smooth: false,
+				symbol: 'none',
+				data : _rslt,
+				duration: 100
+			}
+			_seriesdata.push(_object)
+		})
+		// ---------------------
+		return _seriesdata;
+	}
+	const getSeriesPWRMTR = (index) => {
+		// ----------------------
+		let _seriesdata = [];
+		plotPWRMTRSensors && plotPWRMTRSensors.forEach( _sensor => {
+			// ---------------------------------
+			let _rslt = getSensorData(_sensor,index);
+			// ---------------
+			let _object = {
+				name : _sensor.name,
+				type : 'line',
+				step: 'start',
+				smooth: false,
+				symbol: 'none',
+				data : _rslt,
+				duration: 100
+			}
+			_seriesdata.push(_object)
+		})
+		// ---------------------
+		return _seriesdata;
+	}
 	// ----------------
+	function diff_hours(dt2, dt1) 
+	{
+ 
+	 var diff =(dt2.getTime() - dt1.getTime()) / 1000;
+	 diff /= (60 * 60);
+	 return diff.toFixed(2);
+	}
+	// -----------------
 	const getSensorData = (sensor,nIndex) => {
 		// ---------------
 		let dataArray = [];
-		sensor.logsdata && sensor.logsdata.map( (_data,index) => {
+		let _reading0,_reading;
+		let _DATEIME0;
 			// -------------------------
-			let _reading;
+		sensor.logsdata && sensor.logsdata.map( (_data,index) => {
 			// -------------------
+			console.log(_data);
+			// ----------------
 			switch (sensor.type) {
 				case "WTRPRS(485)":
 					_reading = `0x${_data.RCV_BYTES[0]}${_data.RCV_BYTES[1]}`;
@@ -365,7 +477,17 @@ const ChartsPage = () => {
 				case "PWRMTR(485)":
 					let _HEXStr = _data.RCV_BYTES[0] + _data.RCV_BYTES[1];
 					let _HEXInt = parseInt(_HEXStr,16) * 0.01;
-					_reading = Number(_HEXInt);
+					let _reading1 = Number(_HEXInt);
+					let _dateTime = new Date(_data.TIMESTAMP);
+					if (index === 0) {
+						_reading = null;					
+					} else {
+						_reading = _reading0 - _reading1;
+						_reading = _reading /(diff_hours(_DATEIME0,_dateTime));
+						_reading = _reading.toFixed(2);
+					}
+					_reading0 = _reading1;
+					_DATEIME0 = _dateTime;	
 					break;
 				case "WISENSOR":
 					_reading = nIndex === 0 ? Number(_data.Temperature) :Number(_data.Humidity);
@@ -415,15 +537,15 @@ const ChartsPage = () => {
 	// --------------
   useEffect(()=>{
     // -----------------
-		if (sensorTypeMap !==null) {
-			let _keys = Object.keys(sensorTypeMap);
+		if (plotSensorMap !==null) {
+			let _keys = Object.keys(plotSensorMap);
 			setKEYS(_keys);
 		}
-  },[sensorTypeMap])
-  // ------------------
+  },[plotSensorMap])
+  // ------------------------
 	const HandleSelection = (_key) => {
 		// ---------------
-		let object = sensorTypeMap[_key];
+		let object = plotSensorMap[_key];
 		setSelection(object.sort(compareByName));
 		setKEY(_key);
 		// ---------------
@@ -434,6 +556,19 @@ const ChartsPage = () => {
 		// plotRHSensors = TEMPERATURE & HUMIDITY
 		// plotVELSensors = VELOCITY
 		// plotPRESSSensors = PRESSURE
+		// ---------------------------------
+		if (sensor.type === 'PWRMTR(485)') {
+			_found = plotPWRMTRSensors.find( el => el.dtuId === sensor.dtuId && el.sensorId === sensor.sensorId)
+			if (_found === undefined) {
+				let _plotPWRMTRSensors = [ ...plotPWRMTRSensors ];
+				_plotPWRMTRSensors.push(sensor);
+				setPlotPWRMTRSensor(_plotPWRMTRSensors);
+			} else {
+				let _plotPWRMTRSensors = plotPWRMTRSensors.filter( el =>  !(el.dtuId === sensor.dtuId && el.sensorId === sensor.sensorId))
+				setPlotPWRMTRSensor(_plotPWRMTRSensors);
+			}
+		}
+		// --------------------------------
 		if (sensor.type === 'WTRPRS(485)') {
 			_found = plotPRESSSensors.find( el => el.dtuId === sensor.dtuId && el.sensorId === sensor.sensorId)
 			if (_found === undefined) {
@@ -475,8 +610,9 @@ const ChartsPage = () => {
 		let _found1 = plotRHSensors.find( el => (el.dtuId === sensor.dtuId && el.sensorId === sensor.sensorId))
 		let _found2 = plotVELSensors.find( el => (el.dtuId === sensor.dtuId && el.sensorId === sensor.sensorId))
 		let _found3 = plotPRESSSensors.find( el => (el.dtuId === sensor.dtuId && el.sensorId === sensor.sensorId))
+		let _found4 = plotPWRMTRSensors.find( el => (el.dtuId === sensor.dtuId && el.sensorId === sensor.sensorId))
 		// ----------------------
-		if (_found1 === undefined && _found2 === undefined && _found3 === undefined) {
+		if (_found1 === undefined && _found2 === undefined && _found3 === undefined && _found4 === undefined) {
 			return false;
 		} else {
 			return true;
@@ -500,11 +636,17 @@ const ChartsPage = () => {
 		setPeriod(period);
 		let date0 = new Date(value[0]);
 		let date1 = new Date(value[1]);
-		// -----------------
-		getSensors(-1,date0,date1);
+		// ------------------------
+		getSensorPlotData(-1,date0,date1);
+		// ------------------------
 		setPlotRHSensor([]);
 		setPlotVELSensor([]);
+		setPlotPRESSSensor([]);
+		setPlotPWRMTRSensor([]);
+		// --------------------
+		setKEYS([]);
 		setSelection(null);
+		// ----------------
 	}
 	// ------
 	// RENDER
@@ -538,8 +680,8 @@ const ChartsPage = () => {
 			<MDBCard className="p-2 m-2" style={{ width: "20rem" }}>
 
       <MDBRow center>
-				{ selection && <div>SENSOR TYPE {key}</div> }
-				<div className='p-2'>
+				{ selection && <div style={{color:'black',textDecorationLine:'underline',textAlign:'left',paddingTop:'5px'}}>SENSOR TYPE {key}</div> }
+				<div className='p-1'>
 				{
 					selection && selection.map((_sensor,index) => {
 						// ---------------------------
@@ -558,36 +700,68 @@ const ChartsPage = () => {
 			</MDBRow>
 
 			<MDBRow center>
-				<div>SENSORS SELECTED</div>
+				<div style={{color:'black',textDecorationLine:'underline',textAlign:'left',paddingTop:'5px'}}>SENSORS SELECTED</div>
 				<div className='p-2'>
-				{ 
-					plotRHSensors && plotRHSensors.map((_sensor,index) => {
-						// ---------------------------
-						let _id = `P-${_sensor.dtuId}-${_sensor.sensorId}`;
-						let _label = _sensor.name;
-						// ----------------------------
-						return(
-							<div class="custom-control custom-checkbox">
-        				<input type="checkbox" checked={checkState(_sensor)} class="custom-control-input" id={_id} onClick={()=>SelectedSensor(_sensor)}></input>
-								<label class="custom-control-label" for={_id}>{_label}</label>
-							</div>
-						)
-					}) 
-				}
-				{ 
-					plotVELSensors && plotVELSensors.map((_sensor,index) => {
-						// ---------------------------
-						let _id = `P-${_sensor.dtuId}-${_sensor.sensorId}`;
-						let _label = _sensor.name;
-						// ----------------------------
-						return(
-							<div class="custom-control custom-checkbox">
-        				<input type="checkbox" checked={checkState(_sensor)} class="custom-control-input" id={_id} onClick={()=>SelectedSensor(_sensor)}></input>
-								<label class="custom-control-label" for={_id}>{_label}</label>
-							</div>
-						)
-					}) 
-				}
+					{ plotRHSensors && (<div style={{color:'blue',paddingTop:'5px'}}>TEMPERATURE SENSOR</div>) }
+					{ 
+						plotRHSensors && plotRHSensors.map((_sensor,index) => {
+							// ---------------------------
+							let _id = `P-${_sensor.dtuId}-${_sensor.sensorId}`;
+							let _label = _sensor.name;
+							// ----------------------------
+							return(
+								<div class="custom-control custom-checkbox">
+									<input type="checkbox" checked={checkState(_sensor)} class="custom-control-input" id={_id} onClick={()=>SelectedSensor(_sensor)}></input>
+									<label class="custom-control-label" for={_id}>{_label}</label>
+								</div>
+							)
+						}) 
+					}
+					{ plotVELSensors && (<div style={{color:'blue',paddingTop:'5px'}}>AIR FLOW SENSOR</div>) }
+					{ 
+						plotVELSensors && plotVELSensors.map((_sensor,index) => {
+							// ---------------------------
+							let _id = `P-${_sensor.dtuId}-${_sensor.sensorId}`;
+							let _label = _sensor.name;
+							// ----------------------------
+							return(
+								<div class="custom-control custom-checkbox">
+									<input type="checkbox" checked={checkState(_sensor)} class="custom-control-input" id={_id} onClick={()=>SelectedSensor(_sensor)}></input>
+									<label class="custom-control-label" for={_id}>{_label}</label>
+								</div>
+							)
+						}) 
+					}
+					{ plotPRESSSensors && (<div style={{color:'blue',paddingTop:'5px'}}>PRESSURE SENSOR</div>) }
+					{ 
+						plotPRESSSensors && plotPRESSSensors.map((_sensor,index) => {
+							// ---------------------------
+							let _id = `P-${_sensor.dtuId}-${_sensor.sensorId}`;
+							let _label = _sensor.name;
+							// ----------------------------
+							return(
+								<div class="custom-control custom-checkbox">
+									<input type="checkbox" checked={checkState(_sensor)} class="custom-control-input" id={_id} onClick={()=>SelectedSensor(_sensor)}></input>
+									<label class="custom-control-label" for={_id}>{_label}</label>
+								</div>
+							)
+						}) 
+					}
+					{ plotPWRMTRSensors && (<div style={{color:'blue',paddingTop:'5px'}}>POWER METER</div>) }
+					{ 
+						plotPWRMTRSensors && plotPWRMTRSensors.map((_sensor,index) => {
+							// ---------------------------
+							let _id = `P-${_sensor.dtuId}-${_sensor.sensorId}`;
+							let _label = _sensor.name;
+							// ----------------------------
+							return(
+								<div class="custom-control custom-checkbox">
+									<input type="checkbox" checked={checkState(_sensor)} class="custom-control-input" id={_id} onClick={()=>SelectedSensor(_sensor)}></input>
+									<label class="custom-control-label" for={_id}>{_label}</label>
+								</div>
+							)
+						}) 
+					}
 				</div>
 			</MDBRow>
 
@@ -614,7 +788,13 @@ const ChartsPage = () => {
 				)}
 				{ plotPRESSSensors.length > 0 && (
 						<ReactEcharts
-							option={getOptionPRESS({title:'PRESSURE'})}
+							option={getOptionPRESS({title:'PRESSURE(BAR)'})}
+							style={{ height: "500px", width: "100%" }}
+						/>				
+				)}
+				{ plotPWRMTRSensors.length > 0 && (
+						<ReactEcharts
+							option={getOptionPWRMTR({title:'POWER CONSUMPTION (KWH)'})}
 							style={{ height: "500px", width: "100%" }}
 						/>				
 				)}
