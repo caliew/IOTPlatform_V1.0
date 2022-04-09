@@ -34,6 +34,7 @@ export const WCPU_A_CWS_PRESS2 = "WCPU_A_CWS_PRESS2";
 export const WCPU_A_CWR_PRESS  = "WCPU_A_CWR_PRESS";
 export const WCPU_A_CWR_PRESS1 = "WCPU_A_CWR_PRESS1";
 export const WCPU_A_CWR_PRESS2 = "WCPU_A_CWR_PRESS2";
+// ---------
 export const WCPU_B_CWS_PRESS1 = "WCPU_B_CWS_PRESS1";
 export const WCPU_B_CWS_PRESS2 = "WCPU_B_CWS_PRESS2";
 export const WCPU_B_CWR_PRESS  = "WCPU_B_CWR_PRESS";

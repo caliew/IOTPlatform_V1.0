@@ -57,8 +57,8 @@ const Navbar = (props) => {
       { user && (user.usertype === "administrator" || user.usertype === "superuser" ) &&
           <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/admin' className='white-text'>ADMIN</Link></MDBNavItem> }
 
-      { user && (user.usertype === "administrator" || user.usertype === "superuser" || user.usertype === "user") &&
-          <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/report' className='white-text'>REPORT</Link></MDBNavItem> }
+      {/* { user && (user.usertype === "administrator" || user.usertype === "superuser" || user.usertype === "user") &&
+          <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/report' className='white-text'>REPORT</Link></MDBNavItem> } */}
 
       <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>closeCollapse('mainNavbarCollapse')} to='/about' className='white-text'>ABOUT</Link></MDBNavItem>
       <MDBNavItem className="px-md-2 font-weight-light"> <Link onClick={()=>onLogout()} to='/login' className='white-text'>LOGOUT</Link></MDBNavItem>

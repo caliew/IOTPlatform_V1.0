@@ -64,8 +64,8 @@ function ENVSysModule({ systemComponent, handleComponetSelection, type, userComp
           // -----------------
           let _sensorObj = {
             name : sensor.name,
-            temperature : sensor.logsdata[0].Temperature ? Number(sensor.logsdata[0].Temperature.toFixed(1)) : null,
-            humidity : sensor.logsdata[0].Humidity ? Number(sensor.logsdata[0].Humidity) : null
+            temperature : (sensor.logsdata[0] && sensor.logsdata[0].Temperature) ? Number(sensor.logsdata[0].Temperature.toFixed(1)) : null,
+            humidity : (sensor.logsdata[0] && sensor.logsdata[0].Humidity) ? Number(sensor.logsdata[0].Humidity) : null
           }
           sensor.logsdata[0] && _tempDatas.push(_sensorObj);
         };
@@ -219,47 +219,6 @@ const getWiSensorHeatMapTag = (_wiSensor,index) => {
       </g>
     </Fragment>
   )
-}
-const getRHHeatMap = (wiSensors) => {
-	return (
-		<Fragment>
-			<def>
-				<radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-						<stop offset="0%" style={{stopColor:'rgb(255,255,255)',stopOpacity:0}} />
-						<stop offset="100%" style={{stopColor:'rgb(0,0,255)',stopOpacity:1}} />
-				</radialGradient>
-				<filter id="heatMap">
-						{/* <!--Blur effect--> */}
-						<feGaussianBlur in="SourceGraphic" stdDeviation="15"/>
-				</filter>
-			</def>
-      {
-        wiSensors && wiSensors.map( (_wiSensor,index) => {
-          return getWiSensorHeatMapTag(_wiSensor,index)
-        })
-      }
-		</Fragment>
-	)
-}
-const getAHULineMap = () => {
-    return (
-        <Fragment>
-            {/* <!-- Simple color stroke --> */}
-            {/* <!-- <circle cx="5" cy="5" r="4" fill="none" stroke="green" /> --> */}
-            {/* <!-- Stroke a circle with a gradient --> */}
-            <defs>
-                <linearGradient id="myGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%"   stop-color="blue" />
-                <stop offset="50%"  stop-color="green" />
-                <stop offset="100%" stop-color="yellow" />
-                </linearGradient>
-            </defs>
-    <polyline points="120,70 220,70 470,70 470,430 220,430 220,350" stroke-width="20" fill="none" stroke="url(#myGradient1)" />
-    <polyline points="320,80 320,180 150,180" stroke-width="20" fill="none" stroke="green"/>
-    <polyline points="470,250 150,250" stroke-width="20" fill="none" stroke="yellow"/>
-        </Fragment>
-    )
-
 }
 const getThemrmometer = (data) => {
   return (

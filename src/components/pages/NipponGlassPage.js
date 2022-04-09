@@ -37,9 +37,11 @@ const NipponGlassPage = () => {
 	// -------
 	const RELOADRAWDARA = () => {
 		try {
+			console.log(`/API/SENSORS/NIPPONGLASS`)
 			// --------------------------------
 			axios.get('/api/sensors/nipponglass', { } ).then (res => {
 				// --------
+				console.log(res.data)
 				setData(res.data);
 				// ---------
 			}).then( res => {

@@ -1,7 +1,7 @@
 import React, { useContext,useEffect,useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import NotificationBoard from '../notification/NotificationBoard';
-import { MDBContainer,MDBIcon,MDBCardGroup,MDBCard,MDBCardBody,MDBCardTitle,MDBCardFooter } from 'mdbreact';
+import { MDBContainer,MDBIcon,MDBCardGroup,MDBCard,MDBCardBody,MDBCardFooter } from 'mdbreact';
 	
 import AuthContext from '../../context/auth/authContext';
 import SensorContext from '../../context/sensor/sensorContext';
@@ -12,6 +12,7 @@ import AHUAirTempSysModule from '../systems/AHUAirTempSysModule';
 import ENVSysModule from '../systems/ENVSysModule';
 import AIRCompSysModule from '../systems/AIRCompSysModule';
 import PIPEWTRTempSysModule from '../systems/PIPEWTRTempSysModule';
+import SYSTEMPERFModule from '../systems/SYSTEMPERFModule';
 import ELECTCompSysModule from '../systems/ELECTCompSysModule';
 import TDK_HVAC_PlanView from '../systems/svg/TDK_HVAC_PlanView';
 
@@ -121,9 +122,9 @@ const HomePage = () => {
 						)}
 
 						{ user && (user.companyname != "AWC" && user.companyname != "IKN" ) && (
-							<MDBCard onClick={()=>setSelection('SYS_HVAC')} className={selection==='SYS_HVAC' && 'grey lighten-2'}>
+							<MDBCard onClick={()=>setSelection('SYS_PERF')} className={selection==='SYS_PERF' && 'grey lighten-2'}>
 								<MDBIcon far icon="snowflake" size="4x" className="d-flex pt-4 justify-content-center" />
-									<MDBCardBody tag="h5">HVAC SYSTEM</MDBCardBody>
+									<MDBCardBody tag="h5">SYSTEM PERF</MDBCardBody>
 									<MDBCardFooter small muted></MDBCardFooter>
 							</MDBCard>
 						)}
@@ -150,6 +151,7 @@ const HomePage = () => {
 					{ selection === 'SYS_AIR_COMPR' && <AIRCompSysModule /> }
 					{ selection === 'SYS_PIPE_TEMP' && <PIPEWTRTempSysModule /> }
 					{ selection === 'SYS_ELECT' && <ELECTCompSysModule /> }
+					{ selection === 'SYS_PERF' && <SYSTEMPERFModule sensorsData={sensorsData} /> }
 					{ selection === 'SYS_HVAC1' && 
 							<TDK_HVAC_PlanView model='4' color='black' 
 								sensorsData={sensorsData} 

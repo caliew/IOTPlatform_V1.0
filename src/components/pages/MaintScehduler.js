@@ -1,14 +1,18 @@
-import React, { Component,useState } from 'react';
+import React, { Component,useState,useEffect,useContext } from 'react';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import "bootstrap-css-only/css/bootstrap.min.css";
 import "mdbreact/dist/css/mdb.css";
 import DateTimePicker from 'react-datetime-picker';
 import Calendar from 'react-awesome-calendar';
 import Lottie from 'react-lottie';
+import {v4 as uuidv4} from 'uuid';
 import animationData from "../../lottie/43885-laptop-working.json";
 
+import MaintEventContext from '../../context/maintEvents/maintEventContext';
+import AuthContext from '../../context/auth/authContext';
+
 import "react-datepicker/dist/react-datepicker.css";
-import { MDBBtn, MDBBox, MDBCard, MDBIcon, MDBBadge, MDBContainer, MDBRow, MDBCol} from "mdbreact";
+import { MDBBtn, MDBCard, MDBIcon, MDBBadge, MDBContainer, MDBRow, MDBCol} from "mdbreact";
 // import "./index.css";
 
 // ---------------
@@ -20,48 +24,38 @@ const defaultOptions = {
 		// preserveAspectRatio: "xMidYMid slice"
 	}
 };
-const InitEvents = [
-  {
-    id: 1,
-    date: "2021-09-12",
-    time: "10:00",
-    from: "2021-09-12T09:00+00:00",
-    to: "2021-09-12T12:00+00:00",
-    color: '#3694DF',
-    title: "Paste Room RH SENSOR and AHU Duct Flow Check",
-    location: "PASTE ROOM",
-    description: "Irreguar RH Reading reported in IOT Platform on 24-08-2021"
-  }
-]
+
 const MaintScehduler = () => {
+  // -------------------------------------
   const [events,setEvents] = useState([]);
-  const [modal,setModal] = useState(false);
-  const [inputEvent, setEvent] = useState({datetimeFrom:new Date(),datetimeTo:new Date(),
+  const [editEvent,setEditEvent] = useState();
+  // --------------------------------------
+	const maintEventContext = useContext(MaintEventContext);
+  const authContext       = useContext(AuthContext);
+	const { maintEvents,getMaintEvents,addMaintEvent,updateMaintEvent,removeMaintEvent } = maintEventContext;
+  const { user } = authContext;
+  // --------------------------------------
+  const [inputEvent, setInputEvent] = useState({datetimeFrom:new Date(),datetimeTo:new Date(),
                                            title:null,location:null,description:null});
-  const [startDate, setDate] = useState(new Date)
-  const [rangeStart, setRangeStart] = useState(new Date)
   const [showHideEvent, setAddEvent] = useState(false);
-  const defaultEndDate = new Date()
-  defaultEndDate.setDate(defaultEndDate.getDate() + 7)
-  const [rangeEnd, setRangeEnd] = useState(defaultEndDate)
-  const today = new Date()
-  // ---------------------  
-  const selectDateHandler = (d) => {
-    setDate(d)
-  }
-  const selectStartDate = d => {
-    setRangeStart(d)
-  }
-  const selectEndDate = d => {
-    setRangeEnd(d)
-  }
+  const [AddMode, setAddMode] = useState(true);
+  // ---------------------
+  useEffect(()=>{ getMaintEvents(user); },[])
+  // -----------
+  useEffect(()=> {
+    setEvents(maintEvents);
+    // getMaintEvents(user);
+  },[maintEvents])
+  // -------------------
   const onHandleAddEvent = () => {
+    setAddMode(true);
     setAddEvent(!showHideEvent);
+    setInputEvent({datetimeFrom:new Date(),datetimeTo:new Date(),title:null,location:null,description:null})
   }
   const onChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    setEvent({ ...inputEvent, [name]: value });
+    setInputEvent({ ...inputEvent, [name]: value });
   }
   const addEvent = (e) => {
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
@@ -73,35 +67,87 @@ const MaintScehduler = () => {
     // -----------
     if (inputEvent.datetimeFrom && inputEvent.datetimeTo && inputEvent.title && 
         inputEvent.location && inputEvent.description) {
-      console.log(_dateFrom,_timeFrom,_dateTo,_timeTo,title,location,description)
-      const newEvent = {
-        id: events.length + 1,
-        date : _dateFrom,
-        time: _timeFrom,
+      // ----------
+      let newEvent = {
+        id: uuidv4(),
+        date:`${_dateFrom}`,
+        time:`${_timeFrom}`,
         from: `${_dateFrom}T${_timeFrom}+00:00`,
         to: `${_dateTo}T${_timeTo}+00:00`,
         color: '#3694DF',
         title: title,
-        location: location,
+        companyname: user.companyname,
+        email: user.email,
+        location: location,        
         description: description
       }
+      // ---------
+      setAddEvent(false);
       console.log(newEvent);
-      events.push(newEvent);
-      setEvent(events);
-      console.log(events);
+      // -------
+      if (AddMode) {
+        addMaintEvent(newEvent);
+      } else {
+        console.log(editEvent.id)
+        newEvent = { ...newEvent, id:editEvent.id }
+        // updateMaintEvent(newEvent);
+        console.log(newEvent);
+      }
     }
   }
-  // ------
+  const onDelete = (eventId) => {
+    removeMaintEvent(eventId)
+  }
+  const onEdit = (eventId) => {
+    let _foundEvent = events.find(_evnt => _evnt.id === eventId);
+    // --------------
+    if (_foundEvent) {
+      setAddMode(false);
+      setAddEvent(true);
+      let date0 = new Date(_foundEvent.from);
+      let date1 = new Date(_foundEvent.to);
+      setEditEvent(_foundEvent);
+      // ------------
+      setInputEvent({
+        ...inputEvent,
+        datetimeFrom: new Date(date0.getTime() + date0.getTimezoneOffset()*60*1000),
+        datetimeTo:   new Date(date1.getTime() + date1.getTimezoneOffset()*60*1000),
+        title:_foundEvent.title,
+        location:_foundEvent.location,
+        description:_foundEvent.description});
+    }
+  }
+  const onClickEvent = (eventId) => {
+    console.info(`..ON CLICK EVENT...`)
+    let _foundEvent = events.find(_evnt => _evnt.id === eventId);
+  }
+  function compareByDate(a, b) {
+    var dateA = new Date(a.from); // ignore upper and lowercase
+    var dateB = new Date(b.from); // ignore upper and lowercase
+    if (dateA < dateB) {
+      return -1;
+    }
+    if (dateA > dateB) {
+      return 1;
+    }
+    // names must be equal
+    return 0;
+  }
+    // ------
   return (
     <main style={{ marginTop: '6rem' }}>
       <MDBContainer>
         <MDBRow>
           <MDBCol md="9" className="mb-r">
-            <Calendar events={events}/>
+            <div>
+              <Calendar onClickEvent={onClickEvent} events={events} />
+            </div>
             <h2 className="text-uppercase my-3">Today:</h2>
             <div id="schedule-items">
-              {events.map(event => (
+              {events && events.sort(compareByDate).map(event => (
                 <Event
+                  onDelete={onDelete}
+                  onEdit={onEdit}
                   key={event.id}
                   id={event.id}
                   date={event.date}
@@ -127,7 +173,7 @@ const MaintScehduler = () => {
                       nativeInputAriaLabel="Date and time"  
                       yearAriaLabel="Year"
                       value={inputEvent.datetimeFrom}
-                      onChange={(e)=>setEvent({datetimeFrom:e,datetimeTo:inputEvent.datetimeTo})}/>
+                      onChange={(e)=>setInputEvent({...inputEvent,datetimeFrom:e,datetimeTo:inputEvent.datetimeTo})}/>
                       EVENT DATE END
                     <DateTimePicker calendarAriaLabel="Toggle calendar"
                       clearAriaLabel="Clear value" dayAriaLabel="Day" hourAriaLabel="Hour"
@@ -135,23 +181,23 @@ const MaintScehduler = () => {
                       nativeInputAriaLabel="Date and time"  
                       yearAriaLabel="Year"
                       value={inputEvent.datetimeTo}
-                      onChange={(e)=>setEvent({datetimeFrom:inputEvent.datetimeFrom,datetimeTo:e})}/></h6>
+                      onChange={(e)=>setInputEvent({...inputEvent,datetimeFrom:inputEvent.datetimeFrom,datetimeTo:e})}/></h6>
                     <MDBCard className="p-2 my-4 w-80" style={{ width: "14rem" }}>
                       {/* <h6>START DATE TIME : {inputEvent.datetimeFrom}</h6> */}
                       {/* <h6>END   DATE TIME : {inputEvent.datetimeTo}</h6> */}
                       <h6>TITLE
-                        <input type='text' placeholder='TITLE' className="form-control" 
+                        <input type='text' placeholder='TITLE' className="form-control" value={inputEvent.title}
                               name='title' onChange={onChange}/></h6>
                       <div>
                         <h6>LOCATION/COMPONENTS
-                          <input  type='text' placeholder='Location' 
+                          <input  type='text' placeholder='Location' value={inputEvent.location}
                                   className="form-control" name='location'  onChange={onChange}/></h6>
                       </div>
                       <h6>DESCRIPTION
-                          <input type='text' placeholder='DESCRIPTION' 
+                          <input type='text' placeholder='DESCRIPTION' value={inputEvent.description}
                                 className="form-control" name='description' onChange={onChange} /></h6>
                       <MDBBtn color='primary' size="lg"className='center' 
-                              onClick={addEvent} >ADD NEW EVENT</MDBBtn>
+                              onClick={addEvent} >{AddMode ? 'ADD NEW EVENT' : 'EDIT EVENT'}</MDBBtn>
                     </MDBCard >
                   </div>)
               }
@@ -204,7 +250,12 @@ class Event extends Component {
               color="danger"
               className="ml-2 float-right"
               onClick={() => this.props.onDelete(this.props.id)}
-            >X</MDBBadge>
+            >DELETE</MDBBadge>
+            <MDBBadge
+              color="primary"
+              className="ml-2 float-right"
+              onClick={() => this.props.onEdit(this.props.id)}
+            >EDIT</MDBBadge>
             <h6 className="mt-0 font-weight-bold">{this.props.title} </h6>{" "}
             <hr className="hr-bold my-2" />
 

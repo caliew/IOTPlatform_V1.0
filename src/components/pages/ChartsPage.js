@@ -1,31 +1,37 @@
 import React, { useContext,useState,useEffect,useRef } from 'react';
 import SensorContext from '../../context/sensor/sensorContext';
 import AlertContext from '../../context/alert/alertContext';
-import { MDBCol,MDBCard,MDBBtn, MDBRow } from 'mdbreact';
+import { MDBCol,MDBCard,MDBBtn,MDBInput,MDBRow,MDBBox } from 'mdbreact';
 import ReactEcharts from "echarts-for-react";
 import DateRangePicker from '@wojtekmaj/react-daterange-picker'
 
 // ----------------------
 const ChartsPage = () => {
 	//	-----------------
-  const alertContext = useContext(AlertContext);
-  // -----------
   const [keys, setKEYS] = useState([]);
+	const [RHTempMin, setBandRHTempMin] = useState('0');
+	const [RHTempMax, setBandRHTempMax] = useState('0');
+	const [RHHumdMin, setBandRHHumdMin] = useState('0');
+	const [RHHumdMax, setBandRHHumdMax] = useState('0');
+	const [AIRVelMin, setBandAIRVelMin] = useState('0');
+	const [AIRVelMax, setBandAIRVelMax] = useState('0');
+	const [PRESSMin, setBandPRESSMin] = useState('0');
+	const [PRESSMax, setBandPRESSMax] = useState('0');
 	const [plotRHSensors,setPlotRHSensor] = useState([]);
 	const [plotVELSensors,setPlotVELSensor] = useState([]);
 	const [plotPWRMTRSensors,setPlotPWRMTRSensor] = useState([]);
 	const [plotPRESSSensors,setPlotPRESSSensor] = useState([]);
+	// -------------------
 	const [key,setKEY] = useState(null);
 	const [selection,setSelection] = useState(null);
 	const [period,setPeriod] = useState(0);
-
   const [value, onChange] = useState([new Date(), new Date()]);
 		// -------------------------------------
   const sensorContext = useContext(SensorContext);
   const { plotSensorMap, getSensorPlotData } = sensorContext;
   // --------------
 	const getOptionRHA = ({title}) => {
-
+		// ----------------
 		return ({
 			title: { text: `${title}` },
 			tooltip: { trigger: "axis" },
@@ -36,6 +42,17 @@ const ChartsPage = () => {
 				top: "10%",
 				data: getLegendsRHData()
 			},
+			xAxis: {
+				type: 'time',
+				boundaryGap: false,
+				splitLine: { show: false }
+			},
+			yAxis: {
+				type: 'value',
+				axisLabel: { formatter: '{value} C' },
+				boundaryGap: [0, '100%'],
+				splitLine: { show: false }
+			},		
 			grid: {
 				left: "3%",
 				right: "4%",
@@ -51,14 +68,6 @@ const ChartsPage = () => {
 					restore: {},
 					saveAsImage: {},
 				}
-			},
-			xAxis: {
-				type: "time",
-				boundaryGap: false
-			},
-			yAxis: {
-				type: "value",
-				boundaryGap: [0, '100%']
 			},
 			dataZoom: [
 				{
@@ -86,6 +95,7 @@ const ChartsPage = () => {
 		})
 	};
 	const getOptionRHB = ({title}) => {
+		// ----------
 		return ({
 			title: { text: `${title}` },
 			tooltip: { trigger: "axis" },
@@ -113,12 +123,15 @@ const ChartsPage = () => {
 				}
 			},
 			xAxis: {
-				type: "time",
-				boundaryGap: false
+				type: 'time',
+				boundaryGap: false,
+				splitLine: { show: false }
 			},
 			yAxis: {
-				type: "value",
-				boundaryGap: [0, '100%']
+				type: 'value',
+				axisLabel: { formatter: '{value} %' },
+				boundaryGap: [0, '100%'],
+				splitLine: { show: false }
 			},
 			dataZoom: [
 				{
@@ -173,12 +186,15 @@ const ChartsPage = () => {
 				}
 			},
 			xAxis: {
-				type: "time",
-				boundaryGap: false
+				type: 'time',
+				boundaryGap: false,
+				splitLine: { show: false }
 			},
 			yAxis: {
-				type: "value",
-				boundaryGap: [0, '100%']
+				type: 'value',
+				axisLabel: { formatter: '{value} m/s' },
+				boundaryGap: [0, '100%'],
+				splitLine: { show: false }
 			},
 			dataZoom: [
 				{
@@ -233,12 +249,15 @@ const ChartsPage = () => {
 				}
 			},
 			xAxis: {
-				type: "time",
-				boundaryGap: false
+				type: 'time',
+				boundaryGap: false,
+				splitLine: { show: false }
 			},
 			yAxis: {
-				type: "value",
-				boundaryGap: [0, '100%']
+				type: 'value',
+				axisLabel: { formatter: '{value} bar' },
+				boundaryGap: [0, '100%'],
+				splitLine: { show: false }
 			},
 			dataZoom: [
 				{
@@ -265,7 +284,7 @@ const ChartsPage = () => {
 			series: getSeriesPRESSURE(0)
 		})
 	};
-	const getOptionPWRMTR = ({title}) => {
+	const getOptionPWRMTRTOTAL = ({title}) => {
 		return ({
 			title: { text: `${title}` },
 			tooltip: { trigger: "axis" },
@@ -292,13 +311,16 @@ const ChartsPage = () => {
 				}
 			},
 			xAxis: {
-				type: "time",
-				boundaryGap: false
+				type: 'time',
+				boundaryGap: false,
+				splitLine: { show: false }
 			},
 			yAxis: {
-				type: "value",
-				boundaryGap: [0, '100%']
-			},
+				type: 'value',
+				axisLabel: { formatter: '{value} kWh' },
+				boundaryGap: [0, '100%'],
+				splitLine: { show: false }
+			},			
 			dataZoom: [
 				{
 					type: 'slider',
@@ -322,6 +344,68 @@ const ChartsPage = () => {
 				}
 			],
 			series: getSeriesPWRMTR(0)
+		})
+	};
+	const getOptionPWRMTRRATE = ({title}) => {
+		return ({
+			title: { text: `${title}` },
+			tooltip: { trigger: "axis" },
+			legend: { 
+				width: "83%",
+				height: "17%",
+				bottom: "91%",
+				top: "10%"
+			},
+			grid: {
+				left: "3%",
+				right: "4%",
+				bottom: "3%",
+				containLabel: true
+			},
+			toolbox: {
+				show: true,
+				feature: {
+					dataZoom: { yAxisIndex: 'none' },
+					dataView: { readOnly: false },
+					magicType: { type: ['line', 'bar'] },
+					restore: {},
+					saveAsImage: {},
+				}
+			},
+			xAxis: {
+				type: 'time',
+				boundaryGap: false,
+				splitLine: { show: false }
+			},
+			yAxis: {
+				type: 'value',
+				axisLabel: { formatter: '{value} kWh/h' },
+				boundaryGap: [0, '100%'],
+				splitLine: { show: false }
+			},
+			dataZoom: [
+				{
+					type: 'slider',
+					xAxisIndex: 0,
+					filterMode: 'none'
+				},
+				{
+					type: 'slider',
+					yAxisIndex: 0,
+					filterMode: 'none'
+				},
+				{
+					type: 'inside',
+					xAxisIndex: 0,
+					filterMode: 'none'
+				},
+				{
+					type: 'inside',
+					yAxisIndex: 0,
+					filterMode: 'none'
+				}
+			],
+			series: getSeriesPWRMTR(1)
 		})
 	};
 	// --------
@@ -371,7 +455,15 @@ const ChartsPage = () => {
 				smooth: false,
 				symbol: 'none',
 				data : _rslt,
-				duration: 100
+				duration: 100,
+				markArea: {
+					itemStyle: {
+						color: 'rgba(0, 255, 0, 0.1)'
+					},
+					data: [
+						[ { name: '',yAxis: index===0 ? `${RHTempMin}`:`${RHHumdMin}`},{ yAxis: index===0 ? `${RHTempMax}`:`${RHHumdMax}`} ],
+					]
+				}	
 			}
 			_seriesdata.push(_object)
 		})
@@ -391,7 +483,15 @@ const ChartsPage = () => {
 				smooth: false,
 				symbol: 'none',
 				data : _rslt,
-				duration: 100
+				duration: 100,
+				markArea: {
+					itemStyle: {
+						color: 'rgba(0, 255, 0, 0.1)'
+					},
+					data: [
+						[ { name: '',yAxis: `${AIRVelMin}`},{yAxis: `${AIRVelMax}`} ],
+					]
+				}
 			}
 			_seriesdata.push(_object)
 		})
@@ -411,7 +511,15 @@ const ChartsPage = () => {
 				smooth: false,
 				symbol: 'none',
 				data : _rslt,
-				duration: 100
+				duration: 100,
+				markArea: {
+					itemStyle: {
+						color: 'rgba(0, 255, 0, 0.1)'
+					},
+					data: [
+						[ { name: '',yAxis: `${PRESSMin}`},{yAxis: `${PRESSMax}`} ],
+					]
+				}
 			}
 			_seriesdata.push(_object)
 		})
@@ -432,7 +540,15 @@ const ChartsPage = () => {
 				smooth: false,
 				symbol: 'none',
 				data : _rslt,
-				duration: 100
+				duration: 100,
+				markArea: {
+					itemStyle: {
+						color: 'rgba(0, 255, 0, 0.1)'
+					},
+					data: [
+						[ { name: '',yAxis: ''},{yAxis: ''} ],
+					]
+				}
 			}
 			_seriesdata.push(_object)
 		})
@@ -456,8 +572,6 @@ const ChartsPage = () => {
 			// -------------------------
 		sensor.logsdata && sensor.logsdata.map( (_data,index) => {
 			// -------------------
-			console.log(_data);
-			// ----------------
 			switch (sensor.type) {
 				case "WTRPRS(485)":
 					_reading = `0x${_data.RCV_BYTES[0]}${_data.RCV_BYTES[1]}`;
@@ -487,7 +601,8 @@ const ChartsPage = () => {
 						_reading = _reading.toFixed(2);
 					}
 					_reading0 = _reading1;
-					_DATEIME0 = _dateTime;	
+					_DATEIME0 = _dateTime;
+					_reading = nIndex === 0 ? _reading1 : _reading;
 					break;
 				case "WISENSOR":
 					_reading = nIndex === 0 ? Number(_data.Temperature) :Number(_data.Humidity);
@@ -553,9 +668,11 @@ const ChartsPage = () => {
 	const SelectedSensor = (sensor) => {
 		// -----------------
 		let _found;
+		// -------------------------------
 		// plotRHSensors = TEMPERATURE & HUMIDITY
 		// plotVELSensors = VELOCITY
 		// plotPRESSSensors = PRESSURE
+		// plotPWRMTRSensors = POWER METER
 		// ---------------------------------
 		if (sensor.type === 'PWRMTR(485)') {
 			_found = plotPWRMTRSensors.find( el => el.dtuId === sensor.dtuId && el.sensorId === sensor.sensorId)
@@ -582,7 +699,7 @@ const ChartsPage = () => {
 		}
 		// ----------------------
 		if (sensor.type === 'AIRFLW(485)') {
-			_found = plotRHSensors.find( el => el.dtuId === sensor.dtuId && el.sensorId === sensor.sensorId)
+			_found = plotVELSensors.find( el => el.dtuId === sensor.dtuId && el.sensorId === sensor.sensorId)
 			if (_found === undefined) {
 				let _plotVELsensors = [ ...plotVELSensors ];
 				_plotVELsensors.push(sensor);
@@ -648,6 +765,22 @@ const ChartsPage = () => {
 		setSelection(null);
 		// ----------------
 	}
+	const BandMaxChange = (_index,_value) => {
+		let value = Number(_value);
+		if (value)	{
+			_index===1 && setBandRHTempMin(value);
+			_index===2 && setBandRHTempMax(value);
+			_index===3 && setBandRHHumdMin(value);
+			_index===4 && setBandRHHumdMax(value);
+			_index===5 && setBandAIRVelMin(value);
+			_index===6 && setBandAIRVelMax(value);
+			_index===7 && setBandPRESSMin(value);
+			_index===8 && setBandPRESSMax(value);
+		}
+	}
+	const getRHCount = () => {
+		return plotRHSensors.length;
+	}
 	// ------
 	// RENDER
 	// ------
@@ -658,7 +791,7 @@ const ChartsPage = () => {
 			</MDBCol>
       <div className="d-flex flex-row justify-content-center flex-wrap" >
 	      <DateRangePicker onChange={onChange} value={value} />
-				<MDBBtn  color={period === 0 ? 'primary' : 'default'} size="md" onClick={()=>loadChartData()}>RELOAD</MDBBtn >
+				<MDBBtn  color={period === 0 ? 'primary' : 'default'} size="md" onClick={()=>loadChartData()}>RELOAD={getRHCount()}</MDBBtn >
 				<MDBBtn  color='default' size="md" onClick={()=>setSelection(null)}>CLEAR SELECTION</MDBBtn >
 			</div>
       <div className="d-flex flex-row justify-content-center flex-wrap" >
@@ -769,11 +902,22 @@ const ChartsPage = () => {
 
 			<MDBCard className="p-3 m-2" style={{ width: "60rem" }}>
 				{ plotRHSensors.length > 0 && (
+					<MDBBox display="flex" >
+						<MDBInput label="BAND MIN" outline onChange={(e)=>{BandMaxChange(1,e.target.value)}}></MDBInput>
+						<MDBInput label="BAND MAX" outline onChange={(e)=>{BandMaxChange(2,e.target.value)}}></MDBInput>
+					</MDBBox >
+					)}
+				{ plotRHSensors.length > 0 && (
 						<ReactEcharts
 							option={getOptionRHA({title:'TEMPERATURE C'})}
 							style={{ height: "500px", width: "100%" }}
 						/>				
 				)}
+				{ plotRHSensors.length > 0 && (
+					<MDBBox display="flex" >
+						<MDBInput label="BAND MAX" outline onChange={(e)=>{BandMaxChange(3,e.target.value)}}/>
+						<MDBInput label="BAND MIN" outline onChange={(e)=>{BandMaxChange(4,e.target.value)}}/>
+					</MDBBox >)}
 				{ plotRHSensors.length > 0 && (
 						<ReactEcharts
 							option={getOptionRHB({title:'HUMIDITY %'})}
@@ -781,20 +925,38 @@ const ChartsPage = () => {
 						/>				
 				)}
 				{ plotVELSensors.length > 0 && (
+					<MDBBox display="flex" >
+						<MDBInput label="BAND MAX" outline onChange={(e)=>{BandMaxChange(5,e.target.value)}}/>
+						<MDBInput label="BAND MIN" outline onChange={(e)=>{BandMaxChange(6,e.target.value)}}/>
+					</MDBBox >)}
+				{ plotVELSensors.length > 0 && (
 						<ReactEcharts
 							option={getOptionVEL({title:'VELOCITY'})}
 							style={{ height: "500px", width: "100%" }}
 						/>				
 				)}
 				{ plotPRESSSensors.length > 0 && (
+					<MDBBox display="flex" >
+						<MDBInput label="BAND MAX" outline onChange={(e)=>{BandMaxChange(7,e.target.value)}}/>
+						<MDBInput label="BAND MIN" outline onChange={(e)=>{BandMaxChange(8,e.target.value)}}/>
+					</MDBBox >)}
+				{ plotPRESSSensors.length > 0 && (
 						<ReactEcharts
 							option={getOptionPRESS({title:'PRESSURE(BAR)'})}
 							style={{ height: "500px", width: "100%" }}
 						/>				
 				)}
+				{ plotPWRMTRSensors.length > 0 && (<MDBBox display="flex" ><MDBInput label="BAND MAX" outline onChange={(e)=>{BandMaxChange(5,e.target.value)}}/><MDBInput label="BAND MIN" outline/></MDBBox >)}
 				{ plotPWRMTRSensors.length > 0 && (
 						<ReactEcharts
-							option={getOptionPWRMTR({title:'POWER CONSUMPTION (KWH)'})}
+							option={getOptionPWRMTRTOTAL({title:'TOTAL POWER CONSUMPTION (KWH)'})}
+							style={{ height: "500px", width: "100%" }}
+						/>				
+				)}
+				{ plotPWRMTRSensors.length > 0 && (<MDBBox display="flex" ><MDBInput label="BAND MAX" outline onChange={(e)=>{BandMaxChange(6,e.target.value)}}/><MDBInput label="BAND MIN" outline/></MDBBox >)}
+				{ plotPWRMTRSensors.length > 0 && (
+						<ReactEcharts
+							option={getOptionPWRMTRRATE({title:'RATE POWER CONSUMPTION (KWH)/HOUR'})}
 							style={{ height: "500px", width: "100%" }}
 						/>				
 				)}

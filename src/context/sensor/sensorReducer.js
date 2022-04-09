@@ -120,7 +120,7 @@ function createData(sensors) {
 
     CTW_A_CWS_PRESS1 : findSensor(sensors,201,65),
     CTW_A_CWS_PRESS2 : findSensor(sensors,201,5),
-    CTW_A_CWR_PRESS  : findSensor(sensors,204,15),
+    CTW_A_CWR_PRESS  : findSensor(sensors,201,49),
     
     CTW_B_TEMP1 : findSensor(sensors,204,38),
     CTW_B_TEMP2 : findSensor(sensors,204,10),

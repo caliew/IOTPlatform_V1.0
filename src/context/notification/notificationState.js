@@ -34,6 +34,7 @@ const NotificationState = props => {
     }
     
   };
+  // ------
   return (
     <NotificationContext.Provider
       value={{

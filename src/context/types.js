@@ -1,3 +1,9 @@
+export const SET_MAINTEVENTS        = 'SET_MAINTEVENTS';
+export const ADD_MAINTEVENT         = 'ADD_MAINTEVENT';
+export const UPDATE_MAINTEVENT      = 'UPDATE_MAINTEVENT';
+export const DELETE_MAINTEVENT      = 'DELETE_MAINTEVENT';
+export const MAINTEVENT_ERROR       = 'MAINTEVENT_ERROR';
+
 export const GET_CONTACTS           = 'GET_CONTACTS';
 export const ADD_CONTACT            = 'ADD_CONTACT';
 export const UPDATE_CONTACT         = 'UPDATE_CONTACT';

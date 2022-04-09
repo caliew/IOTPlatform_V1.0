@@ -1,5 +1,4 @@
 import React, { useState,useEffect,useContext } from 'react';
-import AuthContext from '../../context/auth/authContext';
 import NotificationContext from '../../context/notification/notificationContext';
 import SensorContext from '../../context/sensor/sensorContext';
 import { MDBContainer,MDBListGroup,MDBListGroupItem,MDBBadge,MDBJumbotron } from 'mdbreact';

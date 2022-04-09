@@ -10,8 +10,8 @@ import DataV from '../datav'
 
 const BigDATAView = ({userCompanyName="TDK"}) => {
   // -----------
-  const sensorContext = useContext(SensorContext);  
-  const { filterSensors, sensorsData, wisensors } = sensorContext;
+  const sensorContext = useContext(SensorContext);
+  const { sensorsData, wisensors } = sensorContext;
 
   let viewBoxData = (userCompanyName === "AWC" || userCompanyName === "IKN")  ? "0 0 1542 583" : "0 0 700 534";
   const getFloorPlan = () => {

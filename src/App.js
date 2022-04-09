@@ -7,7 +7,8 @@ import Alert from './components/layout/Alerts'
 import AuthState from './context/auth/authState';
 import AlertState from './context/alert/alertState';
 import SensorState from './context/sensor/sensorState';
-import NotificationState from './context/notification/notificationState'
+import MaintEventState from './context/maintEvents/maintEventState';
+import NotificationState from './context/notification/notificationState';
 
 const App = () => {
   // --------------------------
@@ -16,10 +17,12 @@ const App = () => {
       <SensorState>
       <AlertState>
         <NotificationState>
-        <Router>
-          <Alert />
-          <Navbar />
-        </Router>
+        <MaintEventState>
+          <Router>
+            <Alert />
+            <Navbar />
+          </Router>
+        </MaintEventState>
         </NotificationState>
       </AlertState>
       </SensorState>
