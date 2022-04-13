@@ -1,6 +1,5 @@
 import React, { useContext,useState,useEffect,useRef } from 'react';
 import SensorContext from '../../context/sensor/sensorContext';
-import AlertContext from '../../context/alert/alertContext';
 import { MDBCol,MDBCard,MDBBtn,MDBInput,MDBRow,MDBBox } from 'mdbreact';
 import ReactEcharts from "echarts-for-react";
 import DateRangePicker from '@wojtekmaj/react-daterange-picker'
@@ -366,7 +365,9 @@ const ChartsPage = () => {
 				show: true,
 				feature: {
 					dataZoom: { yAxisIndex: 'none' },
-					dataView: { readOnly: false },
+					dataView: { 
+						show:true, 
+						readOnly: false },
 					magicType: { type: ['line', 'bar'] },
 					restore: {},
 					saveAsImage: {},
@@ -747,6 +748,13 @@ const ChartsPage = () => {
 		// names must be equal
 		return 0;
 	}
+	const Download = () => {
+		console.log('..DOWNLOAD...');
+		console.log(plotRHSensors);
+		console.log(plotVELSensors);
+		console.log(plotPWRMTRSensors);
+		console.log(plotPRESSSensors);
+	}
 	// -------
 	const loadChartData = () => {
 		// ---------------
@@ -791,8 +799,8 @@ const ChartsPage = () => {
 			</MDBCol>
       <div className="d-flex flex-row justify-content-center flex-wrap" >
 	      <DateRangePicker onChange={onChange} value={value} />
-				<MDBBtn  color={period === 0 ? 'primary' : 'default'} size="md" onClick={()=>loadChartData()}>RELOAD={getRHCount()}</MDBBtn >
-				<MDBBtn  color='default' size="md" onClick={()=>setSelection(null)}>CLEAR SELECTION</MDBBtn >
+				<MDBBtn  color={period === 0 ? 'primary' : 'default'} size="lg" onClick={()=>loadChartData()}>RELOAD={getRHCount()}</MDBBtn >
+				<MDBBtn  color='default' size="lg" onClick={()=>setSelection(null)}>CLEAR SELECTION</MDBBtn >
 			</div>
       <div className="d-flex flex-row justify-content-center flex-wrap" >
       {
@@ -833,7 +841,7 @@ const ChartsPage = () => {
 			</MDBRow>
 
 			<MDBRow center>
-				<div style={{color:'black',textDecorationLine:'underline',textAlign:'left',paddingTop:'5px'}}>SENSORS SELECTED</div>
+				<MDBBtn  color='default' size="lg" >SENSOR SELECTED</MDBBtn >
 				<div className='p-2'>
 					{ plotRHSensors && (<div style={{color:'blue',paddingTop:'5px'}}>TEMPERATURE SENSOR</div>) }
 					{ 
@@ -896,6 +904,9 @@ const ChartsPage = () => {
 						}) 
 					}
 				</div>
+			</MDBRow>
+			<MDBRow center>
+				<MDBBtn  color='default' size="lg" onClick={()=>Download()}>DOWNLOAD</MDBBtn >
 			</MDBRow>
 
 			</MDBCard>

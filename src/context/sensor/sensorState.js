@@ -48,8 +48,11 @@ const SensorState = props => {
     try {
       // --------------------------------
       const params = { totalLines : datasets, id: user._id, date0, date1 };
+      // console.log(`[SENSORSTATE.JS].. API/SENSORS [GET]..${datasets}..${user._id}`)
       axios.get('/api/sensors', { params } ).then (res => {
         // ----------------
+        // console.log(`..CALLBACK.. <${res.data.length}>`);
+        // console.log(res.data.filter(_sensor => _sensor.sensorId==='B0-BC-82-C4-C4-41'));
         dispatch({type: SET_SENSORS,payload: res.data});
         // ----------------
       })

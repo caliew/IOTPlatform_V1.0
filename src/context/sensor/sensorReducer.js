@@ -288,7 +288,7 @@ export default (state, action) => {
         ...state,
         plotSensorMap : null,
         loading:true
-      }
+      };
     case SET_PLOTSENSORDATA:
       let _plotsensormap = action.payload.reduce((map,sensor) => { 
         if (map[sensor.type] === undefined) {

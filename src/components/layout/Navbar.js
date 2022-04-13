@@ -1,10 +1,8 @@
 import React, { useContext,useState,useEffect } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Routes from '../../Routes';
 import { MDBNavbar,MDBNavbarBrand,MDBNavbarNav,MDBNavbarToggler,MDBCollapse,MDBNavItem,MDBFooter,MDBIcon } from 'mdbreact';
 // import './App.css';
-import spinner from './spinner.gif';
-import TDKLogo from './TDK_LOGO_White.png'
 
 import AuthContext from '../../context/auth/authContext';
 
@@ -12,9 +10,6 @@ const Navbar = (props) => {
   // ---------------------------------------------
   const [collapseID,setCollapseID] = useState('');
   const authContext = useContext(AuthContext);
-  const history = useHistory();
-  // ---------------------------
-  const { title, icon } = props;
   const { isAuthenticated, logout, user, loadUser } = authContext;
   // ---------------------------------------------
   useEffect(() => {

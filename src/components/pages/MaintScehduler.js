@@ -58,6 +58,7 @@ const MaintScehduler = () => {
     setInputEvent({ ...inputEvent, [name]: value });
   }
   const addEvent = (e) => {
+    console.log(`..ADD EVENT/EDIT EVENT...${AddMode}`)
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
     const { datetimeFrom,datetimeTo,title,location,description} = inputEvent;
     const _dateFrom = datetimeFrom.toLocaleDateString('fr-CA', options);
@@ -83,19 +84,20 @@ const MaintScehduler = () => {
       }
       // ---------
       setAddEvent(false);
-      console.log(newEvent);
       // -------
       if (AddMode) {
+        console.log('ADD EVENT')
         addMaintEvent(newEvent);
       } else {
-        console.log(editEvent.id)
+        console.log('EDIT EVENT',editEvent.id)
         newEvent = { ...newEvent, id:editEvent.id }
-        // updateMaintEvent(newEvent);
-        console.log(newEvent);
+        updateMaintEvent(newEvent);
       }
     }
   }
   const onDelete = (eventId) => {
+    // ----------------------
+    console.log(eventId);
     removeMaintEvent(eventId)
   }
   const onEdit = (eventId) => {

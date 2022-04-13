@@ -46,8 +46,8 @@ export default () => {
       // -------------
       // createData();
       // -------------
-      getSensorsData(100);
-      const timer = setInterval(createData, 5000)
+      // getSensorsData(100);
+      const timer = setInterval(createData, 5000);    // 5000
       return () => clearInterval(timer)
   }, [])
   // ------------------

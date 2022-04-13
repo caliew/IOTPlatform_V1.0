@@ -1,7 +1,7 @@
 import React from 'react'
 import { 
-    WCPU_A_TEMP1, WCPU_A_TEMP2, WCPU_A_FLOWRATE, WCPU_A_ELECTPWR,
-    WCPU_B_TEMP1, WCPU_B_TEMP2, WCPU_B_FLOWRATE, WCPU_B_ELECTPWR 
+    WCPU_A_TEMP1, WCPU_A_TEMP2,  
+    WCPU_B_TEMP1, WCPU_B_TEMP2 
 } from '../../types'
 // REFERENCE SVG DATA FROM 
 // '../components/svg/TDK_ISOVIEW.svg'

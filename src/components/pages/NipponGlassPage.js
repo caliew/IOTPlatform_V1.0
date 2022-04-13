@@ -37,11 +37,10 @@ const NipponGlassPage = () => {
 	// -------
 	const RELOADRAWDARA = () => {
 		try {
-			console.log(`/API/SENSORS/NIPPONGLASS`)
+			// console.log(`/API/SENSORS/NIPPONGLASS`)
 			// --------------------------------
 			axios.get('/api/sensors/nipponglass', { } ).then (res => {
-				// --------
-				console.log(res.data)
+				// ------------------
 				setData(res.data);
 				// ---------
 			}).then( res => {
@@ -147,6 +146,7 @@ const NipponGlassPage = () => {
 	const drawSVG = () => {
 		// -------------------
 		let { _TIME, _DTUID, _SENSORID, _kWhr, _VoltageA, _VoltageB, _VoltageC, _CurrentA, _CurrentB, _CurrentC, _PowerF, _FREQ } = abstractData(0);
+		let ObjPRESSURE = (rawdata && rawdata['sensorData'][0]) ? rawdata['sensorData'][0] : null;
 		// -------------------
 		// let current     =`A=${(hexToSignedInt(bytesData[3]+bytesData[4])*0.001).toFixed(2)} B=${(hexToSignedInt(bytesData[5]+bytesData[6])*0.001).toFixed(2)} C=${(hexToSignedInt(bytesData[7]+bytesData[8])*0.001).toFixed(2)}`;
 		// let powerfactor =`${(_dataArr[15]*0.0001).toFixed(2)}`;
@@ -162,7 +162,7 @@ const NipponGlassPage = () => {
 		return (
 			<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="1400" height="550" viewBox="0 0 1400 550"  preserveAspectRatio="xMidYMid meet" >
 	 			<g transform="translate(450,300) scale(1.0,1.0)" >
-					<rect width="280" height="200" rx="5" stroke="yellow" stroke-width="4" fill="black"/>
+					<rect width="280" height="150" rx="5" stroke="yellow" stroke-width="4" fill="black"/>
 	 				<g transform="translate(5,5)" >
 						<text x="10" y="20"  fill="white" font-size="1.0em" >{_TIME && `${_TIME.getDate()}/${_TIME.getMonth()+1}`} </text>
 						<text x="10" y="38"  fill="white" font-size="1.0em" >{_TIME && `${_TIME.getHours().toString().padStart(2,"0")}: ${_TIME.getMinutes().toString().padStart(2,"0")}`} </text>
@@ -197,6 +197,12 @@ const NipponGlassPage = () => {
 							<text x="5" y="20"  fill="white" font-size="1.0em" >{_DTUID} | {_SENSORID}</text>
 						</g>
 					</g>
+				</g>
+				<g transform="translate(450,460) scale(1.0,1.0)" >
+					<rect width="280" height="50" rx="5" stroke="yellow" stroke-width="4" fill="blue"/>
+					<text x="10" y="20"  fill="white" font-size="1.0em" >{ObjPRESSURE && `${ObjPRESSURE._DATE}`} </text>
+					<text x="10" y="38"  fill="white" font-size="1.0em" >{ObjPRESSURE && `${ObjPRESSURE._TIME}`} </text>
+					<text x="100" y="32" fill="white" font-size="1.5em" >{ObjPRESSURE && `${ObjPRESSURE._READING} PSI`}</text>
 				</g>
 				 <circle cx="310" cy="430" r={getRadius()} stroke="red" stroke-width="3" fill="none"  />
 				 <circle cx="310" cy="430" r="10" stroke="red" stroke-width="3" fill="yellow"  />

@@ -42,15 +42,9 @@ const MaintEventState = props => {
   // --------------------
   const addMaintEvent = async maintEvent => {
     // ---------------
-    const config = {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
     try {
       // -------
       console.log(`POST...API/MAINTEVENTS/ADD..${maintEvent}`)
-      const res = await axios.post('/api/maintEvents/add', maintEvent, config);
       dispatch({
         type: ADD_MAINTEVENT,
         payload: maintEvent
@@ -65,15 +59,9 @@ const MaintEventState = props => {
   };
   const updateMaintEvent = async maintEvent => {
     // ---------------
-    const config = {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
     try {
       // -------
       console.log(`POST...API/MAINTEVENTS/UPDATE..${maintEvent}`)
-      const res = await axios.post('/api/maintEvents/update', maintEvent, config);
       dispatch({
         type: UPDATE_MAINTEVENT,
         payload: maintEvent
@@ -88,15 +76,11 @@ const MaintEventState = props => {
 
   }
   const removeMaintEvent = async maintEvent => {
+    // ---------------
     let _ObjMaintEvent = { id:maintEvent }
-    const config = {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    };
+    // -------
     try {
       console.log(`POST...API/MAINTEVENTS/DELETE..${_ObjMaintEvent}`)
-      const res = await axios.post('/api/maintEvents/delete', _ObjMaintEvent);
       dispatch({
         type: DELETE_MAINTEVENT,
         payload: maintEvent
