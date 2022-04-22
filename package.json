@@ -2,6 +2,7 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "@data-ui/sparkline": "0.0.84",
     "@data-ui/theme": "0.0.84",
@@ -54,6 +55,7 @@
     ]
   },
   "proxy": "http://localhost:5000",
+  "proxy1": "http://202.59.9.164:5000/:5000",
   "devDependencies": {
     "react-app-rewired": "^2.1.8"
   }

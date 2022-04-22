@@ -191,7 +191,6 @@ const ReportPage = () => {
         wiSensors.length === 0 ? <Spinner /> : wiSensors.map((sensor,index) => {
           // -----
           let { datas } = getDatas(sensor);
-					let keySensorStat = `${sensor.dtuId}_${sensor.sensorId}`;
           // -----
           return (
             <MDBCard className='p-2 m-2 align-items-center justify-content-center' center style={{width:'550px'}}>

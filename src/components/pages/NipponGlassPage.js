@@ -1,7 +1,6 @@
-import React, { useContext,useEffect,useState } from 'react';
-import { MDBBtn, MDBDataTable, MDBTable, MDBTableBody, MDBTableHead } from 'mdbreact';
+import React, { useEffect,useState } from 'react';
+import { MDBBtn, MDBDataTable } from 'mdbreact';
 import axios from 'axios';
-import Lottie from 'react-lottie';
 import animationData from "../../lottie/43885-laptop-working.json";
 import { ReactComponent as SVGPLOT1} from '../systems/svg/files/NIPPON_GLASS_FLOORPLAN.svg';
 
@@ -202,7 +201,7 @@ const NipponGlassPage = () => {
 					<rect width="280" height="50" rx="5" stroke="yellow" stroke-width="4" fill="blue"/>
 					<text x="10" y="20"  fill="white" font-size="1.0em" >{ObjPRESSURE && `${ObjPRESSURE._DATE}`} </text>
 					<text x="10" y="38"  fill="white" font-size="1.0em" >{ObjPRESSURE && `${ObjPRESSURE._TIME}`} </text>
-					<text x="100" y="32" fill="white" font-size="1.5em" >{ObjPRESSURE && `${ObjPRESSURE._READING} PSI`}</text>
+					<text x="100" y="32" fill="white" font-size="1.5em" >{ObjPRESSURE && `${Number(ObjPRESSURE._READING) +  1.0} PSI`}</text>
 				</g>
 				 <circle cx="310" cy="430" r={getRadius()} stroke="red" stroke-width="3" fill="none"  />
 				 <circle cx="310" cy="430" r="10" stroke="red" stroke-width="3" fill="yellow"  />

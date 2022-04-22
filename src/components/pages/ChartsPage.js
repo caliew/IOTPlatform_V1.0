@@ -2,6 +2,8 @@ import React, { useContext,useState,useEffect,useRef } from 'react';
 import SensorContext from '../../context/sensor/sensorContext';
 import { MDBCol,MDBCard,MDBBtn,MDBInput,MDBRow,MDBBox } from 'mdbreact';
 import ReactEcharts from "echarts-for-react";
+import { CSVDownload,CSVLink } from 'react-csv';
+import AlertContext from '../../context/alert/alertContext';
 import DateRangePicker from '@wojtekmaj/react-daterange-picker'
 
 // ----------------------
@@ -16,17 +18,26 @@ const ChartsPage = () => {
 	const [AIRVelMax, setBandAIRVelMax] = useState('0');
 	const [PRESSMin, setBandPRESSMin] = useState('0');
 	const [PRESSMax, setBandPRESSMax] = useState('0');
+	// ------------------------------------------------
 	const [plotRHSensors,setPlotRHSensor] = useState([]);
 	const [plotVELSensors,setPlotVELSensor] = useState([]);
 	const [plotPWRMTRSensors,setPlotPWRMTRSensor] = useState([]);
 	const [plotPRESSSensors,setPlotPRESSSensor] = useState([]);
 	// -------------------
+  const [reportData,setReportData] = useState([]);
+	const [fileName, setFileName] = useState('Clue_Mediator_Report_Async.csv');
+  const [headers,setHeaders] = useState([]);
+	// ---------
 	const [key,setKEY] = useState(null);
 	const [selection,setSelection] = useState(null);
 	const [period,setPeriod] = useState(0);
-  const [value, onChange] = useState([new Date(), new Date()]);
+  const [dateRange, onDateChangePicker] = useState([null, null]);
+	const [_loadMode, setLoadData] = useState(0);
 		// -------------------------------------
-  const sensorContext = useContext(SensorContext);
+	const alertContext = useContext(AlertContext);
+	const sensorContext = useContext(SensorContext);
+	const { setAlert } = alertContext;
+	const linkRef = useRef();
   const { plotSensorMap, getSensorPlotData } = sensorContext;
   // --------------
 	const getOptionRHA = ({title}) => {
@@ -748,19 +759,74 @@ const ChartsPage = () => {
 		// names must be equal
 		return 0;
 	}
-	const Download = () => {
-		console.log('..DOWNLOAD...');
-		console.log(plotRHSensors);
-		console.log(plotVELSensors);
-		console.log(plotPWRMTRSensors);
-		console.log(plotPRESSSensors);
+  // ------------------
+  const csvReport = {
+    data: reportData,
+    headers: headers,
+    filename: fileName
+  };
+  function hexToSignedInt(hex) {
+    if (hex.length % 2 != 0) {
+      hex = "0" + hex;
+    }
+    var num = parseInt(hex, 16);
+    var maxVal = Math.pow(2, (hex.length / 2) * 8);
+    if (num > maxVal / 2 - 1) {
+      num = num - maxVal;
+    }
+    return num;
+  };
+	const HandleDownload = () => {
+		// --------------------------
+		if (plotPWRMTRSensors.length === 0) return;
+		// -----------
+		let _dateTime = new Date();
+		let _label = `${_dateTime.getDate()}_${_dateTime.getMonth()}_${_dateTime.getFullYear()}`
+		console.log(_dateTime.getDate(),_dateTime.getMonth(),_dateTime.getFullYear())
+		console.log(_label)
+		setAlert(`...DOWNLOAD..>>>> SENSOR ID=${_label}..`, 'primary');
+		setFileName(`${_label}.csv`);
+		// ---------
+		let _PWRMTR = plotPWRMTRSensors[0];
+		const logsdata = _PWRMTR.logsdata;
+		let _objMap = plotSensorMap[_PWRMTR.type];
+		let _foundObject = _objMap.find(_elm => _elm.dtuId === _PWRMTR.dtuId && _elm.sensorId === _PWRMTR.sensorId);
+		if (_foundObject === null) return;
+		// --------------------
+		console.log(_foundObject.name);
+		// -----------------------
+		plotRHSensors && plotRHSensors.length > 0 && console.log(plotRHSensors[0])
+		_PWRMTR && console.log(plotPWRMTRSensors[0].logsdata)
+		// -----------------------------------
+		// const logsdata = plotPWRMTRSensors ?  plotPWRMTRSensors[0].logsdata : null;
+		// -------------------
+		const _reportData = [];
+		const _reportHeader = [{label:'DATE',key:'date'},{label:'time',key:'time'},{label:'modelID',key:'modelID'},
+					{label:'ELECT PWR (kWh)',key:'kWh'}];
+		setHeaders(_reportHeader)
+		// -----------
+		// POWER METER
+		// -----------
+		for (let i=0; i< logsdata.length; i++) {
+			// --------------
+			const {modelID,modelType,TIMESTAMP,Temperature,Humidity,RCV_BYTES}  = logsdata[i];
+			let _kWhr = hexToSignedInt(RCV_BYTES[0]+RCV_BYTES[1]).toFixed(0);
+			const _date = new Date(TIMESTAMP);
+			let data = { date:_date.toLocaleDateString(), time:`${_date.toLocaleDateString()} ${_date.toLocaleTimeString([], {
+				hour: '2-digit',minute: '2-digit'})}`,modelID:_foundObject.name,kWh:_kWhr};
+			_reportData.push(data);
+		}
+		// ----------
+		setReportData(_reportData);
 	}
 	// -------
 	const loadChartData = () => {
 		// ---------------
 		setPeriod(period);
-		let date0 = new Date(value[0]);
-		let date1 = new Date(value[1]);
+		setLoadData(1);
+		// ---------------
+		let date0 = new Date(dateRange[0]);
+		let date1 = new Date(dateRange[1]);
 		// ------------------------
 		getSensorPlotData(-1,date0,date1);
 		// ------------------------
@@ -786,8 +852,11 @@ const ChartsPage = () => {
 			_index===8 && setBandPRESSMax(value);
 		}
 	}
-	const getRHCount = () => {
-		return plotRHSensors.length;
+	const getLOADINGTEXT = () => {
+		// -------
+		let _STATE = 'SELECT DATE RANGE';
+		if (dateRange[0] !== null ) _STATE = keys.length > 0 ? 'DATA LOADED': ( _loadMode === 0 ? 'CLICK TO LOAD DATA' : 'LOADING..');
+		return _STATE;
 	}
 	// ------
 	// RENDER
@@ -798,8 +867,8 @@ const ChartsPage = () => {
 			<MDBCol md="9" className="mb-r">
 			</MDBCol>
       <div className="d-flex flex-row justify-content-center flex-wrap" >
-	      <DateRangePicker onChange={onChange} value={value} />
-				<MDBBtn  color={period === 0 ? 'primary' : 'default'} size="lg" onClick={()=>loadChartData()}>RELOAD={getRHCount()}</MDBBtn >
+	      <DateRangePicker onChange={onDateChangePicker} value={dateRange} />
+				<MDBBtn  color={keys.length > 0 ? 'success' : 'black'} size="lg" onClick={()=>loadChartData()}>{getLOADINGTEXT()}</MDBBtn >
 				<MDBBtn  color='default' size="lg" onClick={()=>setSelection(null)}>CLEAR SELECTION</MDBBtn >
 			</div>
       <div className="d-flex flex-row justify-content-center flex-wrap" >
@@ -821,7 +890,7 @@ const ChartsPage = () => {
 			<MDBCard className="p-2 m-2" style={{ width: "20rem" }}>
 
       <MDBRow center>
-				{ selection && <div style={{color:'black',textDecorationLine:'underline',textAlign:'left',paddingTop:'5px'}}>SENSOR TYPE {key}</div> }
+				{ selection && <div style={{color:'black',textDecorationLine:'underline',textAlign:'left',paddingTop:'5px'}}>SENSOR TYPE = {key}</div> }
 				<div className='p-1'>
 				{
 					selection && selection.map((_sensor,index) => {
@@ -841,7 +910,7 @@ const ChartsPage = () => {
 			</MDBRow>
 
 			<MDBRow center>
-				<MDBBtn  color='default' size="lg" >SENSOR SELECTED</MDBBtn >
+				<MDBBtn  color='warning' size="lg" >SENSOR SELECTED</MDBBtn >
 				<div className='p-2'>
 					{ plotRHSensors && (<div style={{color:'blue',paddingTop:'5px'}}>TEMPERATURE SENSOR</div>) }
 					{ 
@@ -906,7 +975,9 @@ const ChartsPage = () => {
 				</div>
 			</MDBRow>
 			<MDBRow center>
-				<MDBBtn  color='default' size="lg" onClick={()=>Download()}>DOWNLOAD</MDBBtn >
+				<MDBBtn  color='black' size="lg" onClick={()=>HandleDownload()}>
+					<CSVLink {...csvReport} ref={linkRef}>Export HISTORIES DATA TO CSV</CSVLink>
+				</MDBBtn >
 			</MDBRow>
 
 			</MDBCard>
