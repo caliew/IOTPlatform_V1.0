@@ -776,6 +776,56 @@ const ChartsPage = () => {
     }
     return num;
   };
+	const CSVPWRMtr = () => {
+		// ------------
+		// POWER METERS
+		// ------------
+		if (plotPWRMTRSensors.length === 0) return;
+		// -----------
+		let _dateTime = new Date();
+		let _label = `${_dateTime.getDate()}_${_dateTime.getMonth()}_${_dateTime.getFullYear()}_PWRMETERS`
+		console.log(_dateTime.getDate(),_dateTime.getMonth(),_dateTime.getFullYear())
+		console.log(_label)
+		setAlert(`...DOWNLOAD..>>>> SENSOR ID=${_label}..`, 'primary');
+		setFileName(`${_label}.csv`);
+		// ---------
+		// -----------------------------------
+		// const logsdata = plotPWRMTRSensors ?  plotPWRMTRSensors[0].logsdata : null;
+		// -------------------
+		const _reportData = [];
+		const _reportHeader = [
+			{label:'DATE',key:'date'},{label:'time',key:'time'},
+			{label:'modelID',key:'modelID'},
+			{label:'ELECT PWR (kWh)',key:'kWh'}];
+		setHeaders(_reportHeader)
+		// -----------
+		// POWER METER
+		// -----------
+		let _PWRMTR = plotPWRMTRSensors[0];
+		const logsdata = _PWRMTR.logsdata;
+		let _objMap = plotSensorMap[_PWRMTR.type];
+		let _foundObject = _objMap.find(_elm => _elm.dtuId === _PWRMTR.dtuId && _elm.sensorId === _PWRMTR.sensorId);
+		if (_foundObject === null) return;
+		// --------------------
+		console.log(`...POWER METERS [${plotPWRMTRSensors.length}]`)
+		console.log(_foundObject.name);
+		// -----------------------
+		plotRHSensors && plotRHSensors.length > 0 && console.log(plotRHSensors[0])
+		_PWRMTR && console.log(plotPWRMTRSensors[0].logsdata)
+		for (let i=0; i< logsdata.length; i++) {
+			// --------------
+			const {modelID,modelType,TIMESTAMP,Temperature,Humidity,RCV_BYTES}  = logsdata[i];
+			let _kWhr = hexToSignedInt(RCV_BYTES[0]+RCV_BYTES[1]).toFixed(0);
+			const _date = new Date(TIMESTAMP);
+			let data = { date:_date.toLocaleDateString(), time:`${_date.toLocaleDateString()} ${_date.toLocaleTimeString([], {
+				hour: '2-digit',minute: '2-digit'})}`,modelID:_foundObject.name,kWh:_kWhr};
+			_reportData.push(data);
+		}
+		// -----------------------
+		setReportData(_reportData);
+		// ------------------------
+
+	}
 	const HandleDownload = () => {
 		// --------------------------
 		if (plotPWRMTRSensors.length === 0) return;
@@ -793,6 +843,7 @@ const ChartsPage = () => {
 		let _foundObject = _objMap.find(_elm => _elm.dtuId === _PWRMTR.dtuId && _elm.sensorId === _PWRMTR.sensorId);
 		if (_foundObject === null) return;
 		// --------------------
+		console.log(`...POWER METERS [${plotPWRMTRSensors.length}]`)
 		console.log(_foundObject.name);
 		// -----------------------
 		plotRHSensors && plotRHSensors.length > 0 && console.log(plotRHSensors[0])

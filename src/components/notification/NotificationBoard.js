@@ -86,6 +86,23 @@ const Notification = () => {
 		if (reading < limit) strAlert = ` ${name} [${sensorId}] ... ${reading}C < ${limit}C` 
 		return strAlert;
 	}
+	const getALERTEVENTS = () => {
+		// ----------
+		let _alertDatas = userNotifications.map((note) => {
+			let color = note.type;
+			return (
+				<h6 className="my-0">
+					<MDBListGroupItem color={color}>{getTimeDateLabel(note.date)}<span>&nbsp;&nbsp;&nbsp;</span>
+						<MDBBadge color={color}>{color.toUpperCase()}</MDBBadge> &nbsp;&nbsp;
+						<i class="far fa-bell" />{note.Flag} &nbsp;&nbsp;
+						{getAlertText(note.name,note.sensorId,note.reading,note.limit)}
+					</MDBListGroupItem>
+				</h6>
+			)
+		});
+		if (userNotifications.length === 0) _alertDatas = <h5>.. SEARCHING ALERTS DATA...</h5>
+		return _alertDatas
+	}
 	// --------
 	return (
 		<MDBContainer style={{width: "auto",position: "relative",marginTop: '2rem'}} >
@@ -95,18 +112,7 @@ const Notification = () => {
 
 				<MDBListGroup className="my-1 mx-1" >
 					{
-						userNotifications && userNotifications.map((note) => {
-							let color = note.type;
-							return (
-								<h6 className="my-0">
-									<MDBListGroupItem color={color}>{getTimeDateLabel(note.date)}<span>&nbsp;&nbsp;&nbsp;</span>
-										<MDBBadge color={color}>{color.toUpperCase()}</MDBBadge> &nbsp;&nbsp;
-										<i class="far fa-bell" />{note.Flag} &nbsp;&nbsp;
-										{getAlertText(note.name,note.sensorId,note.reading,note.limit)}
-									</MDBListGroupItem>
-								</h6>
-							)
-						})
+						userNotifications === null ?  <h5>.. DATA LOADING ..</h5> : getALERTEVENTS()
 					}
 				</MDBListGroup>
 			</MDBJumbotron>
